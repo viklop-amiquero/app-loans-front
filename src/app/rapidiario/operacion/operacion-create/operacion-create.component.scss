@@ -1,0 +1,334 @@
+$colorPrimario : #70356F;
+$gris: #8e8c90;
+$negro: #000;
+
+p {
+    margin: 0;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+}
+
+.material-symbols-outlined {
+    color: #10b981;
+}
+.time{
+    color:  #fb923c;
+}
+.pig-arrow {
+    color: #8b5cf6;
+    font-size: 40px;
+}
+
+.producto {
+    max-height: 400px;
+    overflow-y: auto;
+
+    &__heading {
+        margin-top: 20px;
+    }
+
+    &__grid {
+        margin-top: 20px;
+    }
+
+    &__cuentaVacia {
+        text-transform: uppercase;
+        text-align: center;
+        font-weight: 700;
+    }
+}
+
+.cliente {
+    font-weight: 700;
+
+    &__span {
+        font-weight: 500;
+    }
+}
+
+.producto {
+    padding: 20px;
+    // font-size: 20px;
+    border: 1px solid #8b5cf6;
+    border-radius: 10px;
+    margin-bottom: 20px;
+
+    &__cuenta {
+        margin-bottom: 10px;
+    }
+
+    &__heading {
+        font-weight: 700;
+    }
+
+    @media (min-width: 768px) {
+        &__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            column-gap: 20px;
+        }
+
+
+    }
+
+    &__cuenta,
+    &__saldo {
+        font-weight: 700;
+    }
+
+    &__span {
+        font-weight: 500;
+        color: $colorPrimario;
+    }
+}
+
+.movimiento {
+    margin-top: 20px;
+
+    &__cuota {
+        font-weight: 700;
+    }
+
+    &__monto {
+        color: $colorPrimario;
+        font-weight: 700;
+
+        &--negativo {
+            &::before {
+                content: '-';
+            }
+
+            color: #dc2626;
+        }
+    }
+
+    &__fecha {
+        font-weight: 700;
+
+        &--cuota {
+            font-weight: 500;
+            color: $gris;
+        }
+    }
+
+    &__hora {
+        color: $gris;
+    }
+
+    &__heading {
+        font-weight: 700;
+    }
+
+    &__detalle p {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__grid {
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e9e9e9;
+
+        &:first-of-type {
+            border-top: 1px solid #e9e9e9;
+        }
+
+    }
+}
+
+
+.aside {
+    &__heading {
+        text-align: center;
+        font-weight: 700;
+        margin: 10px 20px;
+    }
+}
+
+
+.contenido {
+
+    @media (min-width: 768px) {
+
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        column-gap: 20px;
+
+    }
+}
+
+.boton {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+
+    &__element {
+        all: unset;
+        display: block;
+        padding: 1rem 1rem;
+        color: $colorPrimario;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid $colorPrimario;
+        transition: background-color .1s ease-in-out;
+
+
+        &:hover {
+            background-color: $colorPrimario;
+            color: #fff;
+        }
+    }
+}
+
+
+.cuenta {
+    &__element {
+        padding: 10px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        border: 1px solid #70356F;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+    }
+
+    &__contenido {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+    }
+
+    &__titulo {
+        font-weight: 700;
+    }
+
+    &__saldo {
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    &__mensaje {
+        color: $gris;
+    }
+}
+
+
+.operacion {
+    &__heading {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    &__titular {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    &__span {
+        font-weight: 500;
+    }
+
+    &__retiro {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 20px;
+    }
+
+
+
+}
+
+
+// spinner styles
+.spinner {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.loader {
+    color: #4f46e5;
+    font-size: 45px;
+    text-indent: -9999em;
+    overflow: hidden;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: relative;
+    transform: translateZ(0);
+    animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
+}
+
+@keyframes mltShdSpin {
+    0% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+            0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+            0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+
+    5%,
+    95% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+            0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+            0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+
+    10%,
+    59% {
+        box-shadow: 0 -0.83em 0 -0.4em,
+            -0.087em -0.825em 0 -0.42em, -0.173em -0.812em 0 -0.44em,
+            -0.256em -0.789em 0 -0.46em, -0.297em -0.775em 0 -0.477em;
+    }
+
+    20% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+            -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em,
+            -0.749em -0.34em 0 -0.477em;
+    }
+
+    38% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+            -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em,
+            -0.82em -0.09em 0 -0.477em;
+    }
+
+    100% {
+        box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em,
+            0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+}
+
+@keyframes round {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+.details-customer{
+    margin-bottom: 20px;
+    div:first-of-type{
+        margin-bottom: 0px;
+    }
+    div{
+        margin-bottom: 10px;
+    }
+}

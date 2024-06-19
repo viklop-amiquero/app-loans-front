@@ -1,0 +1,338 @@
+<mat-card>
+  <mat-card-content>
+    <mat-stepper linear #stepper [orientation]="(stepperOrientation | async)!">
+      <mat-step [stepControl]="formStepper01" [editable]="isEditable">
+        <ng-template matStepLabel>Datos personales</ng-template>
+        <form [formGroup]="formStepper01">
+          <fieldset class="row dense-3 between-md">
+            <legend>Información básica</legend>
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" style="width: 100%;" class="full-width mat-body">
+                <mat-label for="tipo" class="mat-body">Seleccione el documento</mat-label>
+                <mat-select [(value)]="docSeleccionado" id="tipo" class="mat-body" placeholder="Seleccione el documento" formControlName="tipodocumento"
+                (ngModelChange)="changeTipoDoc()">
+                  <mat-option selected class="mat-body" *ngFor="let option of optionTipoDoc" [value]="option.i_DOC_TYPE_ID">{{option.v_ABBREVIATION}}</mat-option>
+
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4" *ngIf="tipodocumento=='1'">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Nro. de documento de identidad</mat-label>
+                <input placeholder="Nro. de DNI" formControlName="dni" matInput type="text" maxlength="8" (keydown)="validarNumeros($event)">
+                <mat-error>
+                  <ng-container *ngIf="nrodniField?.hasError('pattern')">Ingrese un dni correcto.</ng-container>
+                  <ng-container *ngIf="nrodniField?.hasError('required')">Este campo es requerido..</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4" *ngIf="tipodocumento=='2'">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Nro. de canet extranjería</mat-label>
+                <input placeholder="Nro. carnet extranjería" formControlName="carnet" matInput type="text" maxlength="12" (keydown)="validarNumeros($event)">
+                <mat-error>
+                  <ng-container *ngIf="nrocarnetField?.hasError('pattern')">Ingrese un carnet correcto.</ng-container>
+                  <ng-container *ngIf="nrocarnetField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4" *ngIf="tipodocumento=='3'">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Nro. de Pasaporte</mat-label>
+                <input placeholder="Nro. Pasaporte" formControlName="pass" matInput type="text" maxlength="12" (keydown)="validarNumeros($event)">
+                <mat-error>
+                  <ng-container *ngIf="nropasField?.hasError('pattern')">Ingrese un pasaporte correcto.</ng-container>
+                  <ng-container *ngIf="nropasField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Primer nombre</mat-label>
+                <input placeholder="Primer nombre" formControlName="firstname" matInput type="text">
+                <mat-error>
+                  <ng-container *ngIf="firstnameField?.hasError('required')">Este campo es requerido.</ng-container>
+                  <ng-container *ngIf="firstnameField?.hasError('pattern')">Ingrese un nombre válido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Segundo nombre</mat-label>
+                <input placeholder="Primer nombre" formControlName="secondname" matInput type="text">
+                <mat-error>
+                  <ng-container *ngIf="secondnameField?.hasError('pattern')">Ingrese un nombre válido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Apellido paterno</mat-label>
+                  <input placeholder="Apellido paterno" formControlName="lastnamepaternal" matInput type="text">
+                  <mat-error>
+                    <ng-container *ngIf="lastnamepaternalField?.hasError('required')">Este campo es requerido.</ng-container>
+                    <ng-container *ngIf="lastnamepaternalField?.hasError('maxlength')">Debe tener máximo 15 caracteres.</ng-container>
+                    <ng-container *ngIf="lastnamepaternalField?.hasError('pattern')">Ingrese un apellido válido</ng-container>
+                  </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Apellido materno</mat-label>
+                <input placeholder="Apellido materno" formControlName="lastnamemothers" matInput type="text">
+                <mat-error>
+                  <ng-container *ngIf="lastnamemothersField?.hasError('required')">Este campo es requerido.</ng-container>
+                  <ng-container *ngIf="lastnamemothersField?.hasError('maxlength')">Debe tener máximo 15 caracteres.</ng-container>
+                  <ng-container *ngIf="lastnamemothersField?.hasError('pattern')">Ingrese un apellido válido</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </fieldset>
+          <fieldset class="row dense-3">
+            <legend>Detalles personales</legend>
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Sexo</mat-label>
+                <input type="text"
+                  placeholder="Sexo"
+                  aria-label="Number"
+                  matInput
+                  formControlName="sex"
+                  [matAutocomplete]="autoSex">
+                <mat-error>
+                  <ng-container *ngIf="sexField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+                <mat-autocomplete autoActiveFirstOption #autoSex="matAutocomplete">
+                  @for (optionSex of tipoSex | async; track optionSex) {
+                    <mat-option [value]="optionSex.i_SEX_ID">{{ optionSex.v_NAME }}</mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" style="width: 100%;" class="full-width mat-body">
+                <mat-label for="datebrith" class="mat-body">Fecha de nacimiento</mat-label>
+                <input matInput name="datebrith" id="datebrith" [matDatepicker]="datebrith" formControlName="datebrith" [min]="minDate" [max]="maxDate" readonly>
+                <mat-error>
+                  <ng-container *ngIf="datebrithField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+                <mat-datepicker-toggle matIconSuffix [for]="datebrith"></mat-datepicker-toggle>
+                <mat-datepicker #datebrith></mat-datepicker>
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Edad</mat-label>
+                <input placeholder="Edad" formControlName="age" matInput type="text" readonly>
+              </mat-form-field>
+            </div>
+
+
+          </fieldset>
+
+          <div class="btnRight">
+             <button type="button" mat-stroked-button routerLink="/rapidiario/colaborador" color="primary">Cancelar</button>&nbsp;
+             <button mat-raised-button color="primary" matStepperNext (click)="saveStep1()" [disabled]="disableSiguiente">Siguiente</button>
+          </div>
+        </form>
+      </mat-step>
+
+
+      <mat-step [stepControl]="formStepper02" [editable]="isEditable">
+        <ng-template matStepLabel>Dirección y otros</ng-template>
+        <form [formGroup]="formStepper02">
+          <fieldset class="row dense-3 between-md">
+            <legend>Dirección del cliente</legend>
+             <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Departamento</mat-label>
+                <input
+                type="text"
+                aria-label="Search"
+                matInput formControlName="department"
+                [matAutocomplete]="autoDepartment"
+                (ngModelChange)="habilitarInputProv()"
+                (input)="onInputChangePro($event)">
+                <mat-error>
+                  <ng-container *ngIf="departmentField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+                <mat-autocomplete autoActiveFirstOption #autoDepartment="matAutocomplete">
+                  @for (option of tipoDeparment  | async; track option) {
+                    <mat-option [value]="option.v_DEPARTAMENT_CODE">{{option.v_DEPARTAMENT}}</mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Provincia</mat-label>
+                <input type="text"
+                  placeholder="Provincia"
+                  aria-label="Search"
+                  matInput
+                  formControlName="province"
+                  [matAutocomplete]="autoProvince"
+                  (ngModelChange)="habilitarInputDist()" (input)="onInputChangeDis($event)">
+                <mat-error>
+                  <ng-container *ngIf="provinceField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+                <mat-autocomplete autoActiveFirstOption #autoProvince="matAutocomplete">
+                  @for (option of tipoProvince | async;track option) {
+                    <mat-option [value]="option.v_CODE_PROVINCE">{{ option.v_PROVINCE }}</mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Distrito</mat-label>
+                <input type="text"
+                  placeholder="Distrito"
+                  aria-label="Number"
+                  matInput
+                  formControlName="district"
+                  [matAutocomplete]="autoDistrict">
+                <mat-error>
+                  <ng-container *ngIf="districtField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+                <mat-autocomplete autoActiveFirstOption #autoDistrict="matAutocomplete">
+                  @for (option of tipoDistrict | async;track option) {
+                    <mat-option [value]="option.v_DISTRICT_CODE">{{ option.v_DISTRICT }}</mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-6">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Dirección de domicilio</mat-label>
+                <input placeholder="Dirección domicilio" formControlName="addreshome" matInput type="text">
+                <mat-error>
+                  <ng-container *ngIf="addresHomeField?.hasError('required')">Este campo es requerido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-xs col-md-6">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Dirección de trabajo</mat-label>
+                <input placeholder="Dirección trabajo" formControlName="addreswork" matInput type="text">
+              </mat-form-field>
+            </div>
+
+          </fieldset>
+
+          <fieldset class="row dense-3 between-md">
+            <legend>Contacto del cliente</legend>
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Número de teléfono</mat-label>
+                  <input placeholder="Número de teléfono" formControlName="phone" maxlength="9" matInput type="text" (keydown)="validarNumeros($event)">
+                  <mat-error>
+                    <ng-container *ngIf="phoneField?.hasError('pattern')">Número inválido.</ng-container>
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Número de celular</mat-label>
+                <input placeholder="Número de celular" formControlName="movilphone" matInput type="text" (keydown)="validarNumeros($event)" maxlength="9">
+                <mat-error>
+                  <ng-container *ngIf="movilPhoneField?.hasError('required')">Este campo es requerido.</ng-container>
+                  <ng-container *ngIf="movilPhoneField?.hasError('pattern')">Número inválido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-4">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Correo electronico</mat-label>
+                  <input placeholder="Correo" formControlName="email" matInput type="email">
+                  <mat-error>
+                    <ng-container *ngIf="emailField?.hasError('email')">Ingrese un correo correcto.</ng-container>
+                  </mat-error>
+              </mat-form-field>
+            </div>
+          </fieldset>
+          <fieldset class="row dense-3">
+            <legend>Contacto de emergencia (familiar y/o otro)</legend>
+            <div class="col-xs col-md-3">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label class="mat-body">Nombre completo del familiar</mat-label>
+                <input placeholder="Nombre del familiar" formControlName="namerelationship" matInput type="text" (ngModelChange)="habilitarInput()">
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-3">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                <mat-label for="relation" class="mat-body">Tipo parentesco</mat-label>
+                <mat-select id="relation" placeholder="Tipo parentesco" formControlName="relationship" (ngModelChange)="habilitarInput()">
+                  <mat-option class="mat-body" value="">Seleccione</mat-option>
+                  <mat-option *ngFor="let parent of parentesco" class="mat-body" [value]="parent.value">{{parent.viewValue}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-3">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Número de teléfono</mat-label>
+                  <input placeholder="Número de teléfono" formControlName="phonerelationship" matInput type="text"
+                  (keydown)="validarNumeros($event)" maxlength="9" >
+                  <mat-error>
+                    <ng-container *ngIf="phoneRelationshipField?.hasError('pattern')">Número inválido.</ng-container>
+                  </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xs col-md-3">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Número de celular</mat-label>
+                  <input placeholder="Número de celular" formControlName="movilphonerelationship" matInput type="text"
+                  (keydown)="validarNumeros($event)" maxlength="9" >
+                  <mat-error>
+                    <ng-container *ngIf="movilPhoneRelationshipField?.hasError('pattern')">Número inválido.</ng-container>
+                  </mat-error>
+              </mat-form-field>
+            </div>
+          </fieldset>
+          <div class="btnRight">
+            <button mat-stroked-button color="primary" matStepperPrevious >Anterior</button>&nbsp;
+            <button mat-stroked-button *ngIf="disableReiniciar" color="primary" (click)="stepper.reset()">Reiniciar</button>&nbsp;
+            <button mat-stroked-button type="button" *ngIf="!disableReiniciar" routerLink="/rapidiario/colaborador" color="primary">Cancelar</button>&nbsp;
+            <button type="button" mat-raised-button color="primary" (click)="saveStep2()">Guardar</button>
+          </div>
+        </form>
+      </mat-step>
+
+    </mat-stepper>
+
+  </mat-card-content>
+</mat-card>
+
+
+
+
+
+
+
+
+
+
+
+
+

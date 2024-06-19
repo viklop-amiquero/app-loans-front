@@ -1,0 +1,278 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 filtro">
+    <h2 class="titulo-centrado">LISTADO DE CLIENTES</h2>
+  </div>
+</div>
+
+<div class="container-grid">
+  <form [formGroup]="form" #forms>
+    <div class="row between-xs">
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Tipo de búsqueda</mat-label>
+          <mat-select class="mat-body" placeholder="Tipo de documento" formControlName="tipo"
+          (selectionChange)="getAllClientTable()" (ngModelChange)="changeSelectTipo()" (click)="resetControls()">
+            <mat-option class="mat-body" value="">Seleccione una opción</mat-option>
+            <mat-option class="mat-body" value="NAME">Nombre</mat-option>
+            <mat-option class="mat-body" value="DNI">DNI</mat-option>
+            <mat-option class="mat-body" value="STATE">Estado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-6 col-md-4 dense-3" *ngIf="tipo == 'DNI'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nro. de documento </mat-label>
+          <input matInput type="text" placeholder="Nro. de documento"   maxlength="8" formControlName="dni" (keyup)="getAllClientTable()" >
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-6 col-md-4 dense-3" *ngIf="tipo == 'NAME'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Cliente </mat-label>
+          <input matInput type="text" placeholder="Ingrese un nombre" formControlName="nombre" (keyup)="getAllClientTable()" >
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-6 col-md-4 dense-3" *ngIf="tipo == 'STATE'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Estado</mat-label>
+          <mat-select class="mat-body" placeholder="Estado" formControlName="estado" (selectionChange)="getAllClientTable()" (ngModelChange)="changeSelectState()" >
+            <mat-option class="mat-body" value="">Seleccione un estado</mat-option>
+            <mat-option class="mat-body" value="0" >Inactivo</mat-option>
+            <mat-option class="mat-body" value="1" >Activo</mat-option>
+            <mat-option class="mat-body" value="2">Borrador</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-6 col-md-4" align="right">
+        <button *ngIf="this.permisos[0] === 1" type="button" mat-raised-button color="primary"
+          (click)="addColaborador()" class="btnAgregar">
+          <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+            <span class="texto-add">Nuevo cliente</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <mat-paginator
+                class="mat-elevation-z8"
+                (page)="handlePageEvent($event)"
+                [length]="length"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions"
+                [showFirstLastButtons]="true"
+                [pageIndex]="pageIndex"
+                aria-label="Select page">
+  </mat-paginator>
+
+  <p></p>
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 staff-table" matSort>
+      <ng-container matColumnDef="i_PERSON_ID">
+        <th mat-header-cell *matHeaderCellDef> Nro. </th>
+        <td mat-cell *matCellDef="let client; let n = index">{{(n+1) + (pageIndex*pageSize)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_DNI">
+        <th mat-header-cell *matHeaderCellDef> DNI </th>
+        <td mat-cell *matCellDef="let client"> {{client.v_DNI}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="v_NAME">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Cliente</span>
+            <mat-icon *ngIf="orderAsc" (click)="clickAsc()">keyboard_arrow_up</mat-icon>
+            <mat-icon *ngIf="orderDesc" (click)="clickDesc()">keyboard_arrow_down</mat-icon>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let client"> {{client.v_FIRST_NAME}} {{client.v_PATERNAL_LAST_NAME}} {{client.v_MOTHER_LAST_NAME}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_ADDRESS">
+        <th mat-header-cell *matHeaderCellDef> Dirección </th>
+        <td mat-cell *matCellDef="let client"> {{client.v_ADDRESS}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_DISTRICT">
+        <th mat-header-cell *matHeaderCellDef> Distrito </th>
+        <td mat-cell *matCellDef="let client"> {{client.v_DISTRICT}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_MOVIL_PHONE">
+        <th mat-header-cell *matHeaderCellDef> Celular </th>
+        <td mat-cell *matCellDef="let client"> {{client.v_MOVIL_PHONE}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="d_DATE_CREATE">
+        <th mat-header-cell *matHeaderCellDef> Fecha ingreso </th>
+        <td mat-cell *matCellDef="let client">
+          <div *ngIf="client.d_DATE_CREATE == '0001-01-01T00:00:00' ; else isNotStart">
+
+          </div>
+          <ng-template #isNotStart>
+          <!-- {{staff.d_DATE_CREATE | date:"dd/MM/yyyy"}} -->
+          {{client.d_DATE_CREATE | date:"dd/MM/yyyy" }}
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="b_STATE">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let client">
+
+          <span class="chip-active"  removable *ngIf="client.b_STATE === '1' ">Activo</span>
+          <span class="chip-inactive" removable *ngIf="client.b_STATE === '0' ">Inactivo</span>
+          <span class="chip-borrador" removable *ngIf="client.b_STATE === '2' ">Borrador</span>
+
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ACTIONS">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell class="btnActions" *matCellDef="let client">
+          <button type="button" mat-icon-button class="btnActionDetail"
+          (click)="openDetailCliente(infoCliente, client.i_PERSON_ID)">
+          <fa-icon [icon]="faEye" [fixedWidth]="true" class="icon-eye"></fa-icon>
+        </button>
+        <button type="button" mat-icon-button class="btnActionEdit"
+          (click)="editColaborador(client.i_PERSON_ID)"
+          [hidden]="deshabilitarBtn(client.b_STATE) || this.permisos[2] === 0">
+          <fa-icon [icon]="faPencil" [fixedWidth]="true" class="icon-pencil"></fa-icon>
+        </button>
+        <button type="button" mat-icon-button class="btnActionDelete"
+          (click)="openDeleteCliente(eliminarCliente,client.i_PERSON_ID,client.v_DNI)"
+          [hidden]="deshabilitarBtn(client.b_STATE) || this.permisos[3] === 0">
+          <fa-icon [icon]="faTrash" [fixedWidth]="true" class="icon-delete"></fa-icon>
+        </button>
+        <button type="button" mat-icon-button class="btnActionActivate"
+          (click)="activarCliente(client.i_PERSON_ID)"
+          [hidden]="!deshabilitarBtn(client.b_STATE) || this.permisos[3] === 0">
+          <fa-icon [icon]="faBolt" [fixedWidth]="true" class="icon-activate"></fa-icon>
+        </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+  </div>
+</div>
+<p></p>
+
+<ng-template #eliminarCliente>
+  <div class="title-modal" cdkFocusInitial>Eliminar cliente</div>
+  <div mat-dialog-content align="center">
+      <p>¿Está seguro que desea eliminar el cliente?</p>
+  </div>
+  <div mat-dialog-actions align="end" class="footerDialog">
+      <button mat-flat-button color="primary" class="loadButton" type="button" (click)="deleteCliente()">
+          Si
+      </button>
+      <button type="button" mat-raised-button color="secondary" class="loadButton btnCancelar" mat-dialog-close>
+          No
+      </button>
+  </div>
+</ng-template>
+
+<ng-template #infoCliente>
+  <div class="title-modal" cdkFocusInitial>Información del cliente</div>
+  <div mat-dialog-content class="dialog-content" align="center" [ngClass]="{activeSpinner: opteniendoDateSer}">
+    <div *ngIf="!opteniendoDateSer" class="spinner-content">
+      <p>Cargando información</p>
+      <mat-spinner diameter="40" color="primary" mode="indeterminate"></mat-spinner>
+    </div>
+    <div *ngIf="opteniendoDateSer" align="start">
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Tipo documento: </mat-label>
+          <p class="info-customer">{{this.getDoctument()}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Número: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.document_persona[0].v_NRO_DOCUMENT}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Primer nombre: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_FIRST_NAME}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Segundo nombre: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_SECOND_NAME==null?'-':this.dataDetailCliente.v_SECOND_NAME}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Apellido paterno: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_PATERNAL_LAST_NAME}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Apellido materno: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_MOTHER_LAST_NAME}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Sexo: </mat-label>
+          <p class="info-customer">{{this.getSex()}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Fecha nacimiento: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.d_BIRTHDATE | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Edad: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.i_AGE}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Departamento: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_DEPARTMENT}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Provincia: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_PROVINCE}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Distrito: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_DISTRICT}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Direcció de domicilio: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_ADDRESS_HOME}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Dirección de trabajo: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.v_ADDRESS_WORK ==null?"-":this.dataDetailCliente.v_ADDRESS_WORK}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Celular: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.contact[0].v_MOVIL_PHONE}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Teléfono: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.contact[0].v_PHONE==null?"-": this.dataDetailCliente.contact[0].v_PHONE}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Estado: </mat-label>
+          <p class="info-customer">{{this.dataDetailCliente.b_STATE==='1'?'ACTIVO':'INACTIVO'}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

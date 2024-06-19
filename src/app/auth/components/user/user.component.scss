@@ -1,0 +1,32 @@
+.mat-column-i_ID_USER {
+  text-align: center;
+}
+
+.mat-column-v_USER {
+  text-align: center;
+}
+
+.mat-column-d_START_DATE {
+  text-align: center;
+}
+
+.mat-column-d_END_DATE {
+  text-align: center;
+}
+
+.mat-column-b_STATE {
+  width: 32px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.mat-column-ACTIONS {
+  width: 150px!important;
+  text-align: center;
+}
+.btnActions{
+  width: 200px !important;
+  .mat-mdc-icon-button.mat-mdc-button-base {
+    font-size: 18px !important;
+  }
+}

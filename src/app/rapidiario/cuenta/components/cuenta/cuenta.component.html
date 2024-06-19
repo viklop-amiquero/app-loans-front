@@ -1,0 +1,188 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 filtro">
+    <h2 class="titulo-centrado">LISTADO DE CUENTAS</h2>
+  </div>
+</div>
+
+<p></p>
+
+<div class="container-grid">
+  <form [formGroup]="form" #forms>
+    <div class="row between-xs">
+      <div class="col-xs-12 col-sm-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Tipo de búsqueda</mat-label>
+          <mat-select class="mat-body" placeholder="Tipo de documento" formControlName="tipo"
+          (selectionChange)="getAllCuentaTable()" (ngModelChange)="changeSelectTipo()" (click)="resetControls()">
+            <mat-option class="mat-body" value="">Seleccione una opción</mat-option>
+            <mat-option class="mat-body" value="NAME">Nombre</mat-option>
+            <mat-option class="mat-body" value="DNI">DNI</mat-option>
+            <mat-option class="mat-body" value="STATE">Estado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 dense-3" *ngIf="tipo == 'DNI'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nro. de documento </mat-label>
+          <input matInput type="text" placeholder="Nro. de documento"   maxlength="8" formControlName="dni" (keyup)="getAllCuentaTable()" >
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 dense-3" *ngIf="tipo == 'NAME'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Cliente </mat-label>
+          <input matInput type="text" placeholder="Ingrese un nombre" formControlName="nombre" (keyup)="getAllCuentaTable()" >
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 dense-3" *ngIf="tipo == 'STATE'">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Estado</mat-label>
+          <mat-select class="mat-body" placeholder="Estado" formControlName="estado" (selectionChange)="getAllCuentaTable()" (ngModelChange)="changeSelectState()" >
+            <mat-option class="mat-body" value="">Seleccione un estado</mat-option>
+            <mat-option class="mat-body" value="0" >Inactivo</mat-option>
+            <mat-option class="mat-body" value="1" >Activo</mat-option>
+            <mat-option class="mat-body" value="2">Borrador</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-4" align="right">
+        <button *ngIf="this.permisos[0] === 1" type="button" mat-raised-button color="primary"
+          (click)="openDialogNewCuenta(createCuenta)" class="btnAgregar">
+          <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+            <span class="texto-add">Nueva cuenta</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <mat-paginator
+                class="mat-elevation-z8"
+                (page)="handlePageEvent($event)"
+                [length]="length"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions"
+                [showFirstLastButtons]="true"
+                [pageIndex]="pageIndex"
+                aria-label="Select page">
+  </mat-paginator>
+
+  <p></p>
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 staff-table" matSort>
+      <ng-container matColumnDef="i_ACCOUNT_ID">
+        <th mat-header-cell *matHeaderCellDef> Nro. </th>
+        <td mat-cell class="mat-colum-NRO" *matCellDef="let cuenta; let n = index">{{(n+1) + (pageIndex*pageSize)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_DNI">
+        <th mat-header-cell *matHeaderCellDef> DNI </th>
+        <td mat-cell class="mat-colum-DOCUMENT" *matCellDef="let cuenta"> {{cuenta.v_NUMBER_DOC}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="v_NAME">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Nombres y apellidos</span>
+            <mat-icon *ngIf="orderAsc" (click)="clickAsc()">keyboard_arrow_up</mat-icon>
+            <mat-icon *ngIf="orderDesc" (click)="clickDesc()">keyboard_arrow_down</mat-icon>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let cuenta"> {{cuenta.v_FIRST_NAME}} {{cuenta.v_PATERNAL_LAST_NAME}} {{cuenta.v_MOTHER_LAST_NAME}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="b_STATE">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell class="mat-column-STATE" *matCellDef="let cuenta">
+
+          <span class="chip-active"  removable *ngIf="cuenta.b_STATE === '1' ">Activo</span>
+          <span class="chip-inactive" removable *ngIf="cuenta.b_STATE === '0' ">Inactivo</span>
+
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ACTIONS" >
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell class="mat-colum-ACTION" *matCellDef="let cuenta" align="center">
+          <button type="button" mat-icon-button color="primary" [matTooltip]="tooltipText" routerLink="informacion"
+            (click)="sendIdCliente(cuenta.i_PERSON_ID)">
+            <fa-icon [icon]="faPlusCircle" [fixedWidth]="true" class="icon-eye"></fa-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+  </div>
+</div>
+
+<h3 *ngIf="!dataSource" align="center">No hay registros de la tabla</h3>
+
+<p></p>
+<ng-template #createCuenta >
+    <div class="title-modal" >Crear cuenta del cliente</div>
+      <form [formGroup]="formCuenta" (ngSubmit)="onSave()" class="content-modal-createcuenta">
+        <div mat-dialog-content>
+            <div class="row dense-3">
+              <div class="col-xs col-md-8">
+                <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Número de documento</mat-label>
+                  <input placeholder="Ingrese número" formControlName="nrodocument" matInput type="text" cdkFocusInitial maxlength="12" (ngModelChange)="habilitarBtn()" (keydown)="validarNumeros($event)" (paste)="validarPegadoNumeros($event)">
+                  <mat-error>
+                    <ng-container *ngIf="nroDocumentoField?.hasError('pattern')">Ingrese un numero de documento valido.</ng-container>
+                    <ng-container *ngIf="nroDocumentoField?.hasError('required')">Este campo es requerido.</ng-container>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-xs col-md-4" align="end">
+                <a mat-raised-button class="btnBuscar" color="primary" (click)="getClienteXDocumento(formCuenta.get('nrodocument')!.value)" [disabled]="disableBtn">Buscar</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs col-md-6">
+                <mat-label class="mat-body">Primer nombre: </mat-label>
+                <p class="info-customer">{{clienteDoc.v_FIRST_NAME}}</p>
+              </div>
+              <div class="col-xs col-md-6">
+                <mat-label *ngIf="clienteDoc.v_SECOND_NAME" class="mat-body">Segundo nombre: </mat-label>
+                <p class="info-customer">{{clienteDoc.v_SECOND_NAME}}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs col-md-6">
+                <mat-label class="mat-body">Apellido paterno: </mat-label>
+                <p class="info-customer">{{clienteDoc.v_PATERNAL_LAST_NAME}}</p>
+              </div>
+              <div class="col-xs col-md-6">
+                <mat-label class="mat-body">Apellido materno: </mat-label>
+                <p class="info-customer">{{clienteDoc.v_MOTHER_LAST_NAME}}</p>
+              </div>
+            </div>
+            <div class="row col-xs col-md-8">
+              <p class="mat-body">Tipo de cuentas:</p>
+              <mat-form-field appearance="outline" class="mat-body" >
+                <mat-label class="mat-body" for="tipocuenta">Tipos de cuenta</mat-label>
+                <mat-select class="mat-body" [formControl]="tiposcuenta" multiple id="tipocuenta">
+                  @for (opcion of tipocuenta; track opcion) {
+                    <mat-option class="mat-body" *ngIf="opcion.v_TYPE_CUENTA!=='CRÉDITO'" [value]="opcion.i_TYPE_CUENTA_ID">{{opcion.v_TYPE_CUENTA}}</mat-option>
+                  }
+                </mat-select>
+                <mat-error>
+                  <ng-container *ngIf="this.tiposcuenta.invalid && this.tiposcuenta.errors?.['required']">Seleccione una cuenta</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div mat-dialog-actions align="center">
+            <button mat-raised-button color="primary" typeBtn="submit" >Guardar</button>&nbsp;&nbsp;
+            <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+          </div>
+      </form>
+  </ng-template>
+
+  <p></p>

@@ -1,0 +1,50 @@
+// Dashboard
+/* Estilos generales */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+.card-mes {
+  margin-bottom: 15px;
+  color: white;
+}
+
+.text-card {
+  font-size: 15px;
+  // font-weight: bold;
+  // color: white;
+}
+
+.content-card {
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.content-card-mes {
+  font-size: 25px;
+  font-weight: bold;
+  color: white;
+}
+
+.mat-mdc-card-title-group {
+  display: block!important;
+}
+
+.ingresos-mes {
+  background-color: lighten(#0d9a38, 30);
+}
+
+.gastos-mes {
+  background-color: lighten(#e59707, 20);
+}
+
+.desembolsos-mes {
+  background-color: lighten(#096ec1, 20);
+}

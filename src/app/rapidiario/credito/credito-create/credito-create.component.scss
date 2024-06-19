@@ -1,0 +1,35 @@
+.details-customer{
+    margin-bottom: 20px;
+    div:first-of-type{
+        margin-bottom: 0px;
+    }
+    div{
+        margin-bottom: 10px;
+    }
+}
+.title-input{
+    padding-top: 10px;
+}
+//Header from steps
+
+.mat-stepper-horizontal {
+    margin-top: 8px;
+}
+::ng-deep.mat-step-header {
+
+    @media (min-width:480px) {
+
+      display: flex;
+      flex-direction: column ;
+      align-items: center ;
+    }
+}
+
+.cronograma-pagos {
+  display: none;
+}
+
+.mostrar {
+  display: block;
+  margin-top: 30px!important;
+}

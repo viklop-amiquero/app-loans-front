@@ -1,0 +1,128 @@
+<div class="container-grid">
+    <form [formGroup]="firstFormGroup">
+      <div class="row dense-3 title-input">
+        <div class="col-lg-4 col-md-3">
+        </div>
+        <div class="col-lg-4 col-md-6 table-text">
+          <mat-form-field appearance="outline" class="mat-body">
+            <mat-label class="mat-body">Número de documento</mat-label>
+            <input #numeroDoc (keydown)="validatorNumber($event)" placeholder="Ingrese el número de documento"
+              formControlName="numeroDoc" matInput type="text" cdkFocusInitial maxlength="12"
+              (keydown)="validatorNumber($event)">
+            <mat-error>
+              <ng-container *ngIf="nroDocumentoField?.hasError('pattern')">Ingrese un numero de documento
+                valido.</ng-container>
+              <ng-container *ngIf="nroDocumentoField?.hasError('required')">Este campo es requerido.</ng-container>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button color="primary" class="btnBuscar" color="primary" (click)="onNumeroDoc()"
+          [disabled]="firstFormGroup.invalid">Buscar</button>
+        <div class="col-lg-4 col-md-3">
+        </div>
+      </div>
+
+      <div *ngIf="personExist">
+        <div class="row details-customer">
+          <div [ngClass]="clienteDoc.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text '">
+            <mat-label class="mat-body">Primer nombre: </mat-label>
+            <span class="info-customer">{{clienteDoc.v_FIRST_NAME}}</span>
+          </div>
+          <div *ngIf="clienteDoc.v_SECOND_NAME"
+            [ngClass]="clienteDoc.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+            <mat-label class="mat-body">Segundo nombre: </mat-label>
+            <span class="info-customer">{{clienteDoc.v_SECOND_NAME}}</span>
+          </div>
+          <div [ngClass]="clienteDoc.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+            <mat-label class="mat-body">Apellido paterno: </mat-label>
+            <span class="info-customer">{{clienteDoc.v_PATERNAL_LAST_NAME}}</span>
+          </div>
+          <div [ngClass]="clienteDoc.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+            <mat-label class="mat-body">Apellido materno: </mat-label>
+            <span class="info-customer">{{clienteDoc.v_MOTHER_LAST_NAME}}</span>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="secondFormGroup">
+      <div *ngIf="personExist">
+        <div class="row">
+          <div class="col-lg-3 col-md-3">
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <mat-form-field appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Tipo de Crédito</mat-label>
+              <mat-select formControlName="tipoCredito">
+                <mat-option *ngFor="let credito of creditos" [value]="credito.value">{{ credito.viewValue
+                  }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Monto de Préstamo</mat-label>
+              <input matInput formControlName="montoPrestamo" placeholder="Ingrese el monto del préstamo" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Frecuencia de Pago</mat-label>
+              <mat-select formControlName="frecuenciaPago" (selectionChange)="onSelectionChange($event)">
+                @for (pago of pagos; track pago) {
+                <mat-option [value]="pago.value">{{pago.viewValue}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="plazoFlag" appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Plazo</mat-label>
+              <input matInput formControlName="plazo" placeholder="Ingrese el plazo" required>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="mesesFlag" appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Plazo</mat-label>
+              <mat-select formControlName="plazo" (selectionChange)="onSelectionChangeMes($event)">
+                <mat-option *ngFor="let mes of meses" [value]="mes.value">{{ mes.viewValue
+                  }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Tasa de Interés</mat-label>
+              <mat-select formControlName="tasaInteres">
+                <mat-option *ngFor="let interes of intereses" [value]="interes.value">{{ interes.viewValue
+                  }}%</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="mat-body">
+              <mat-label class="mat-body">Fecha de Desembolso</mat-label>
+              <input formControlName="fechaDesembolso" matInput [matDatepicker]="picker">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-3 col-md-3">
+          </div>
+        </div>
+
+        <div align="center">
+          <button mat-raised-button color="primary" (click)="onNextButtonClick()"
+            [disabled]="!secondFormGroup.valid">Simular</button>
+        </div>
+      </div>
+
+      <p></p>
+      <div class="cronograma-pagos" [class.mostrar]="isSimulated">
+        <app-credito-table [secondFormGroup]="secondFormGroup"></app-credito-table>
+
+        <div align="right" style="margin-top: 20px;">
+          <button *ngIf="this.permisos[0] === 1 || this.permisos[2] === 1" type="button" mat-raised-button color="primary"
+            (click)="addEditCredito()">
+            <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+            <span class="texto-add">Nuevo credito</span>
+          </button>
+        </div>
+      </div>
+    </form>
+</div>

@@ -1,0 +1,77 @@
+
+<div class="row">
+    <div class="col-xs-12 filtro">
+      <h2 class="titulo-centrado">INFORMACIÓN DEL CLIENTE</h2>
+    </div>
+</div>
+  <div class="info-cuenta" align="start">
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Documento: </mat-label>
+          <p>DNI</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Número: </mat-label>
+          <p>{{this.dataCuenta.v_NRO_DOCUMENT}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Primer nombre: </mat-label>
+          <p>{{this.dataCuenta.v_FIRST_NAME}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Segundo nombre: </mat-label>
+          <p>{{this.dataCuenta.v_SECOND_NAME==null?'-':this.dataCuenta.v_SECOND_NAME}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Apellido paterno: </mat-label>
+          <p>{{this.dataCuenta.v_PATERNAL_LAST_NAME}}</p>
+        </div>
+        <div class="col-xs col-md-6">
+          <mat-label class="mat-body">Apellido materno: </mat-label>
+          <p>{{this.dataCuenta.v_MOTHER_LAST_NAME}}</p>
+        </div>
+      </div>
+  </div>
+<div class="cards-cuenta">
+  <mat-card class="card-cuenta" *ngFor="let cuenta of infoCuenta; let i=index">
+      <mat-card-title class="card-cuenta-title">{{this.tipoCuenta(cuenta.i_ACCOUNT_TYPE_ID)}}</mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Numero de cuenta: </mat-label>
+            <p>{{this.infoCuenta[i].v_ACCOUNT_NUMBER}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Saldo total: </mat-label>
+            <p>{{this.infoCuenta[i].i_BALANCE.toFixed(2)}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Usuario que creo la cuenta: </mat-label>
+            <p>{{this.infoCuenta[i].v_USER_CREATE}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Fecha de creación: </mat-label>
+            <p>{{this.infoCuenta[i].d_CREATE_DATE | date:'dd/MM/yyyy'}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Usuario que modifico la cuenta: </mat-label>
+            <p>{{this.infoCuenta[i].v_USER_MODIF}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Fecha de modificación: </mat-label>
+            <p>{{this.infoCuenta[i].d_MODIF_DATE ==null?"-":this.infoCuenta[i].d_MODIF_DATE| date:'dd/MM/yyyy'}}</p>
+          </div>
+          <div class="col-xs-12">
+            <mat-label class="mat-body">Estado: </mat-label>
+              <span class="chip-active"  removable *ngIf="this.infoCuenta[i].b_STATE=== '1' ">ACTIVO</span>
+              <span class="chip-inactive" removable *ngIf="this.infoCuenta[i].b_STATE=== '0' ">INACTIVO</span>
+          </div>
+        </div>
+      </mat-card-content>
+
+  </mat-card>
+</div>

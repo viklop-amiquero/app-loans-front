@@ -1,0 +1,289 @@
+
+<div class="container-grid">
+    <mat-card class="card-interes-credito">
+        <mat-card-header class="title-interes">
+          <mat-card-title>Interés crédito</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row between-md">
+                <div class="col-xs-4">
+                    <mat-form-field appearance="outline" class="mat-body dense-3">
+                        <mat-label>Tipo de búsqueda</mat-label>
+                        <input matInput (keyup)="filterCredito($event)" placeholder="Buscar ..." #input>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs-8" align="end">
+                    <button  type="button" mat-raised-button color="primary" class="btnAgregar"
+                    (click)="openDialogInteresCredito(createInteresCredito)">
+                  <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+                    <span class="texto-add">Nuevo interés crédito</span>
+                </button>
+                </div>
+            </div>
+
+
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="ID">
+                <th mat-header-cell *matHeaderCellDef> No. </th>
+                <td mat-cell *matCellDef="let interes; let n = index">{{n+1}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="v_NAME">
+                    <th mat-header-cell *matHeaderCellDef> Tipo de interés </th>
+                    <td mat-cell *matCellDef="let interes"> {{interes.v_NAME}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="i_INTEREST">
+                    <th mat-header-cell *matHeaderCellDef> Interés % </th>
+                    <td mat-cell *matCellDef="let interes"> {{interes.i_INTEREST}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="v_FREQUENCY">
+                <th mat-header-cell *matHeaderCellDef> Frecuencia </th>
+                <td mat-cell *matCellDef="let interes"> {{interes.v_FREQUENCY}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="b_STATE">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell class="mat-column-STATE" *matCellDef="let interes">
+
+                      <span class="chip-active"  removable *ngIf="interes.b_STATE === '1' ">Activo</span>
+                      <span class="chip-inactive" removable *ngIf="interes.b_STATE === '0' ">Inactivo</span>
+
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ACTION">
+                <th mat-header-cell *matHeaderCellDef> Acción </th>
+                <td mat-cell *matCellDef="let interes">
+                    <button type="button" mat-icon-button class="btnActionEdit"
+                    (click)="getInteresCreditoId(interes.i_INTEREST_CREDIT_ID); openDialogInteresCredito(createInteresCredito)">
+                        <fa-icon [icon]="faPencil" [fixedWidth]="true" class="icon-pencil"></fa-icon>
+                    </button>
+                    <button type="button" mat-icon-button class="btnActionDelete"
+                    (click)="openDeleteInteres(eliminarInteres,interes.i_INTEREST_CREDIT_ID,'credito')"
+                    [hidden]="deshabilitarBtn(interes.b_STATE)">
+                        <fa-icon [icon]="faTrash" [fixedWidth]="true" class="icon-delete"></fa-icon>
+                    </button>
+                    <button type="button" mat-icon-button class="btnActionActivate"
+                    (click)="activarInteres(interes.i_INTEREST_CREDIT_ID,'credito')"
+                    [hidden]="!deshabilitarBtn(interes.b_STATE)">
+                    <fa-icon [icon]="faBolt" [fixedWidth]="true" class="icon-activate"></fa-icon>
+                    </button>
+                </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-header class="title-interes">
+          <mat-card-title>Interés ahorro</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row between-md">
+                <div class="col-xs-4">
+                    <mat-form-field appearance="outline" class="mat-body dense-3">
+                        <mat-label>Tipo de búsqueda</mat-label>
+                        <input matInput (keyup)="filterAhorro($event)" placeholder="Buscar ..." #input2>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs-8" align="end">
+                    <button  type="button" mat-raised-button color="primary" class="btnAgregar"
+                    (click)="openDialogInteresAhorro(createInteresAhorro)">
+                  <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+                    <span class="texto-add">Nuevo interés ahorro</span>
+                </button>
+                </div>
+            </div>
+
+
+            <table mat-table [dataSource]="dataSourceAhorro" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="ID">
+                    <th mat-header-cell *matHeaderCellDef> No. </th>
+                    <td mat-cell *matCellDef="let inter; let m = index">{{m+1}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="v_NAME">
+                    <th mat-header-cell *matHeaderCellDef> Tipo de interés </th>
+                    <td mat-cell *matCellDef="let inter"> {{inter.v_NAME}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="i_INTEREST">
+                    <th mat-header-cell *matHeaderCellDef> Interés % </th>
+                    <td mat-cell *matCellDef="let inter"> {{inter.i_INTEREST}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="v_FREQUENCY">
+                <th mat-header-cell *matHeaderCellDef> Frecuencia </th>
+                <td mat-cell *matCellDef="let inter"> {{inter.v_FREQUENCY}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="b_STATE">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell class="mat-column-STATE" *matCellDef="let inter">
+
+                      <span class="chip-active"  removable *ngIf="inter.b_STATE === '1' ">Activo</span>
+                      <span class="chip-inactive" removable *ngIf="inter.b_STATE === '0' ">Inactivo</span>
+
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ACTION">
+                <th mat-header-cell *matHeaderCellDef> Acción </th>
+                <td mat-cell *matCellDef="let inter">
+                    <button type="button" mat-icon-button class="btnActionEdit"
+                    (click)="getInteresAhorroId(inter.i_INTEREST_SAVING_ID); openDialogInteresAhorro(createInteresAhorro)">
+                    <fa-icon [icon]="faPencil" [fixedWidth]="true" class="icon-pencil"></fa-icon>
+                    </button>
+                    <button type="button" mat-icon-button class="btnActionDelete"
+                    (click)="openDeleteInteres(eliminarInteres,inter.i_INTEREST_SAVING_ID,'ahorro')"
+                    [hidden]="deshabilitarBtn(inter.b_STATE)">
+                    <fa-icon [icon]="faTrash" [fixedWidth]="true" class="icon-delete"></fa-icon>
+                    </button>
+                    <button type="button" mat-icon-button class="btnActionActivate"
+                    (click)="activarInteres(inter.i_INTEREST_SAVING_ID,'ahorro')"
+                    [hidden]="!deshabilitarBtn(inter.b_STATE)">
+                    <fa-icon [icon]="faBolt" [fixedWidth]="true" class="icon-activate"></fa-icon>
+                    </button>
+                </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+
+</div>
+
+<p></p>
+<ng-template #createInteresCredito >
+    <div class="title-modal" >Crear interes crédito</div>
+      <form [formGroup]="formInteresCredito" class="dialog-createinteres" (ngSubmit)="onSaveCredito()">
+        <div mat-dialog-content>
+            <div class="row dense-3">
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Tipo de interés</mat-label>
+                    <input placeholder="" formControlName="nombre" matInput type="text">
+                    <mat-error>
+                        <ng-container *ngIf="nombreField?.hasError('required')">Este campo es requerido.</ng-container>
+                        <ng-container *ngIf="nombreField?.hasError('pattern')">Nombre de interés no válido</ng-container>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label for="frecuencia" class="mat-body">Frecuencia</mat-label>
+                    <mat-select id="frecuencia" placeholder="Frecuencia del interés" formControlName="frecuencia" (ngModelChange)="changeSelectFreC()">
+                        <mat-option class="mat-body" value="">Seleccione</mat-option>
+                        <mat-option *ngFor="let frec of frecuencia" class="mat-body" [value]="frec.value">{{frec.frecuencia}}</mat-option>
+                    </mat-select>
+                    <mat-error>
+                        <ng-container *ngIf="frecuenciaField?.hasError('required')">Seleccione la frecuencia.</ng-container>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Tasa interés</mat-label>
+                    <input placeholder="" formControlName="tasainteres" matInput type="text">
+                    <mat-error>
+                        <ng-container *ngIf="tasaInteresField?.hasError('required')">Este campo es requerido.</ng-container>
+                        <ng-container *ngIf="tasaInteresField?.hasError('pattern')">Ingrese una tasa de interés valido</ng-container>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Descripción</mat-label>
+                    <input placeholder="" formControlName="descripcion" matInput type="text">
+                    <mat-error>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+          <div mat-dialog-actions align="end">
+            <button mat-raised-button color="primary" typeBtn="submit" >Guardar</button>&nbsp;&nbsp;
+            <button mat-stroked-button color="primary" mat-dialog-close="" (click)="closeDialog()">Cancelar</button>
+          </div>
+      </form>
+  </ng-template>
+
+<p></p>
+<ng-template #createInteresAhorro >
+    <div class="title-modal" >Crear interes ahorro</div>
+      <form [formGroup]="formInteresAhorro" class="dialog-createinteres" (ngSubmit)="onSaveAhorro()">
+        <div mat-dialog-content>
+            <div class="row dense-3">
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Tipo interés</mat-label>
+                    <input placeholder="" formControlName="nombreahorro" matInput type="text">
+                    <mat-error>
+                        <ng-container *ngIf="nombreAhorroField?.hasError('required')">Este campo es requerido.</ng-container>
+                        <ng-container *ngIf="nombreAhorroField?.hasError('pattern')">Nombre de interés no válido</ng-container>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                        <mat-label for="frecuenciaahorro" class="mat-body">Frecuencia</mat-label>
+                        <mat-select id="frecuenciaahorro" placeholder="Frecuencia del interés" formControlName="frecuenciaahorro" (ngModelChange)="changeSelectFreA()">
+                            <mat-option class="mat-body" value="">Seleccione</mat-option>
+                            <mat-option *ngFor="let frec of frecuencia" class="mat-body" [value]="frec.value">{{frec.frecuencia}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <ng-container *ngIf="frecuenciaAhorroField?.hasError('required')">Seleccione la frecuencia.</ng-container>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Tasa interés</mat-label>
+                    <input placeholder="" formControlName="tasainteresahorro" matInput type="text">
+                    <mat-error>
+                        <ng-container *ngIf="tasaInteresAhorroField?.hasError('required')">Este campo es requerido.</ng-container>
+                        <ng-container *ngIf="tasaInteresAhorroField?.hasError('pattern')">Ingrese una tasa de interés valido</ng-container>
+                    </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-xs col-md-6">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Descripción</mat-label>
+                    <input placeholder="Ingrese una descripción" formControlName="descripcionahorro" matInput type="text">
+
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+          <div mat-dialog-actions align="end">
+            <button mat-raised-button color="primary" typeBtn="submit" >Guardar</button>&nbsp;&nbsp;
+            <button mat-stroked-button color="primary" mat-dialog-close="" (click)="closeDialog()">Cancelar</button>
+          </div>
+      </form>
+  </ng-template>
+
+  <ng-template #eliminarInteres>
+    <div class="title-modal" cdkFocusInitial>Eliminar interés</div>
+    <div mat-dialog-content align="center">
+        <p>¿Está seguro que desea eliminar el interés?</p>
+    </div>
+    <div mat-dialog-actions align="end" class="footerDialog">
+        <button mat-flat-button color="primary" class="loadButton" type="button" (click)="deleteInteres()">
+            Si
+        </button>
+        <button type="button" mat-raised-button color="secondary" class="loadButton btnCancelar" mat-dialog-close>
+            No
+        </button>
+    </div>
+  </ng-template>

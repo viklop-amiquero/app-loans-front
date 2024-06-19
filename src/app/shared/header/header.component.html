@@ -1,0 +1,16 @@
+<mat-toolbar class="header-toolbar">
+  <mat-toolbar-row>
+    <div class="container">
+      <div class="row between-xs middle-xs header-row">
+
+        <a class="col-xs-2" routerLink="/home">
+          <img class="img-header" src="../../../../assets/images/SeñorCautivo_3.png" alt="logo" />
+        </a>
+        <button *ngIf="isMobile" [ngClass]="{'mobile-menu': isMobile}" (click)="clickMenu()"><mat-icon>menu</mat-icon> </button>
+
+      </div>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="back-slider"></div>

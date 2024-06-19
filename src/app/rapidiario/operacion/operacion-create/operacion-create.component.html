@@ -1,0 +1,419 @@
+<div class="container-grid">
+  <form [formGroup]="firstFormGroup">
+    <div class="row dense-3 title-input">
+      <div class="col-lg-4 col-md-3">
+      </div>
+      <div class="col-lg-4 col-md-6 table-text">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Número de documento</mat-label>
+          <input #numeroDoc (keydown)="validatorNumber($event)" placeholder="Ingrese el número de documento"
+            formControlName="numeroDoc" matInput type="text" cdkFocusInitial maxlength="12"
+            (keydown)="validatorNumber($event)">
+          <mat-error>
+            <ng-container *ngIf="nroDocumentoField?.hasError('pattern')">Ingrese un numero de documento
+              valido.</ng-container>
+            <ng-container *ngIf="nroDocumentoField?.hasError('required')">Este campo es requerido.</ng-container>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button color="primary" class="btnBuscar" color="primary" (click)="onNumeroDoc()"
+        [disabled]="firstFormGroup.invalid">Buscar</button>
+      <div class="col-lg-4 col-md-3">
+      </div>
+    </div>
+
+    <div *ngIf="personExist">
+      <div class="row details-customer">
+        <div [ngClass]="documento.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text '">
+          <mat-label class="mat-body">Primer nombre: </mat-label>
+          <span class="info-customer">{{documento.v_FIRST_NAME}}</span>
+        </div>
+        <div *ngIf="documento.v_SECOND_NAME"
+          [ngClass]="documento.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+          <mat-label class="mat-body">Segundo nombre: </mat-label>
+          <span class="info-customer">{{documento.v_SECOND_NAME}}</span>
+        </div>
+        <div [ngClass]="documento.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+          <mat-label class="mat-body">Apellido paterno: </mat-label>
+          <span class="info-customer">{{documento.v_PATERNAL_LAST_NAME}}</span>
+        </div>
+        <div [ngClass]="documento.v_SECOND_NAME ? 'col-lg-3 col-md-3 table-text' : 'col-lg-4 col-md-4 table-text'">
+          <mat-label class="mat-body">Apellido materno: </mat-label>
+          <span class="info-customer">{{documento.v_MOTHER_LAST_NAME}}</span>
+        </div>
+      </div>
+
+      <div align="right">
+        <button *ngIf="this.permisos[0] === 1 || this.permisos[2] === 1" type="button" mat-raised-button color="primary"
+          (click)="openDialog(nuevaOperacionDialog)">
+          <fa-icon [icon]="faSquarePlus" class="faicon-squareplus" [fixedWidth]="true"></fa-icon>
+          <span class="texto-add">Nueva operación</span>
+        </button>
+      </div>
+      <h2 class="producto__heading">Productos:</h2>
+      <p class="producto__cuentaVacia"
+        *ngIf="movimientosAhorro.length === 0 && movimientosAporte.length === 0 && cuotasCard.length === 0">No hay
+        cuentas por mostrar</p>
+      <div class="producto__grid">
+        <div class="producto" *ngIf="movimientosAhorro.length>0">
+          <div class="producto__ahorro">
+            <p class="producto__cuenta">Cuenta: <span class="producto__span">Ahorros</span></p>
+            <p class="producto__saldo">Saldo: <span class="producto__span">S/. {{ this.cuentaAhorro[0].i_SALDO }}</span></p>
+          </div>
+          <div class="movimiento">
+            <h3 class="movimiento__heading">Movimientos</h3>
+            <div class="movimiento__grid" *ngFor="let movimiento of movimientosAhorro">
+              <div class="movimiento__detalle">
+                <p class="movimiento__fecha">
+                  {{movimiento.formattedDate}}
+                </p>
+                <p class="movimiento__hora">
+                  {{movimiento.formattedTime}}
+                </p>
+              </div>
+              <p class="movimiento__monto" [ngClass]="{'movimiento__monto--negativo': movimiento.v_TYPE === 'retiro'}">
+                S/. {{movimiento.i_AMOUNT}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="producto" *ngIf="movimientosAporte.length>0">
+          <div class="producto__aporte">
+            <p class="producto__cuenta">Cuenta: <span class="producto__span">Aporte</span></p>
+            <p class="producto__saldo">Saldo: <span class="producto__span">S/. {{ this.cuentaAportes[0].i_SALDO }}</span></p>
+          </div>
+          <div class="movimiento">
+            <h3 class="movimiento__heading">Aportes {{year}}</h3>
+            <div class="movimiento__grid" *ngFor="let movimiento of movimientosAporte">
+              <p class="movimiento__fecha">
+                {{movimiento.formattedMonth}}
+              </p>
+              <span class="material-symbols-outlined">
+                check_circle
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="producto" *ngIf="cuotasCard.length>0">
+          <div class="producto__credito">
+            <p class="producto__cuenta">Cuenta: <span class="producto__span">Crédito</span></p>
+            <p class="producto__saldo">Saldo: <span class="producto__span">S/. {{ this.cuentaCredito[0].i_SALDO }}</span></p>
+          </div>
+          <div class="movimiento">
+            <h3 class="movimiento__heading">Cuotas {{this.cuotascliente.formattedDate | date:'yyyy'}}</h3>
+            <div class="movimiento__grid" *ngFor="let cuota of cuotasCard">
+              <div class="movimiento__detalle">
+                <p class="movimiento__cuota">Cuota: {{cuota.v_INSTALLMENT_NUMBER}}</p>
+                <p class="movimiento__cuota">Monto: S/. {{cuota.i_INSTALLMENT_AMOUNT}}</p>
+                <p class="movimiento__fecha--cuota">Vence: {{cuota.formattedDate}}</p>
+              </div>
+              <fa-icon [icon]="faClock" class="time" [fixedWidth]="true" style="width: 24px; height: 24px;"></fa-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<ng-template #nuevaOperacionDialog>
+  <div class="ng-profile">
+    <div class="title-modal" cdkFocusInitial>Crear operación</div>
+    <form [formGroup]="secondFormGroup" #formOperacion>
+      <mat-dialog-content>
+        <mat-form-field appearance="outline" class="mat-body dense-3">
+          <mat-label class="mat-body">Operación</mat-label>
+          <mat-select class="mat-body" formControlName="operacion" (selectionChange)="onOperacionChange($event.value)">
+            @for (operacion of operaciones; track operacion) {
+            <mat-option [value]="operacion.value">{{operacion.viewValue}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <div class="cuota" *ngIf="cuota && cuotaFlag">
+          <section class="section-radio">
+            <mat-label class="mat-body">Opciones de pago:</mat-label>
+            <mat-radio-group class="mat-body" [formControl]="optionRadio">
+              <mat-radio-button class="mat-radio-button" color="primary" value="cuota">Pago cuotas</mat-radio-button>
+              <mat-radio-button class="mat-radio-button" color="primary" value="subcuota"
+                (change)="onChangeCheck($event)">Pago diferido</mat-radio-button>
+            </mat-radio-group>
+          </section>
+          <div *ngIf="optionRadio.value==='subcuota'">
+            <h3 *ngIf="subCuotas" class="title-subcuota mat-body">Cuota N° {{cuota.v_INSTALLMENT_NUMBER}} </h3>
+            <table class="table-subcuota" *ngIf="subCuotas.length > 0">
+              <thead>
+                <tr>
+                  <th>Monto S/.</th>
+                  <th>Saldo S/.</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let subCuota of subCuotas">
+                  <td>{{subCuota.i_AMOUNT}}</td>
+                  <td>{{subCuota.i_BALANCE_INSTALLMENT}}</td>
+                  <td>{{subCuota.formattedDate}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="optionRadio.value==='cuota'">
+            <div class="modal-table-container">
+              <table mat-table [dataSource]="cuotas" class="mat-elevation-z16">
+                <ng-container matColumnDef="CUOTA">
+                  <th mat-header-cell *matHeaderCellDef> Nro. cuota</th>
+                  <td mat-cell *matCellDef="let cuota"> {{cuota.v_INSTALLMENT_NUMBER}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="MONTO">
+                  <th mat-header-cell *matHeaderCellDef> Monto </th>
+                  <td mat-cell *matCellDef="let cuota"> {{cuota.i_TOTAL_AMOUNT}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="FECHA">
+                  <th mat-header-cell *matHeaderCellDef> Fecha vencimiento </th>
+                  <td mat-cell *matCellDef="let cuota"> {{cuota.formattedDate}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ESTADO">
+                  <th mat-header-cell *matHeaderCellDef> Estado </th>
+                  <td mat-cell *matCellDef="let cuota" align="center">
+                    <span class="chip-inactive" removable *ngIf="cuota.b_STATE === '0' ">Anulado</span>
+                    <span class="chip-borrador" removable *ngIf="cuota.b_STATE === '1' ">Pendiente</span>
+                    <span class="chip-active" removable *ngIf="cuota.b_STATE === '2' ">Pagado</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ACCION">
+                  <th mat-header-cell *matHeaderCellDef> Pagar todo
+                    <mat-checkbox [formControl]="selectAll" [indeterminate]="allComplete"
+                      (change)="selectAllCuotas($event)"></mat-checkbox>
+                  </th>
+                  <td mat-cell *matCellDef="let cuota">
+                    <mat-checkbox *ngIf="cuota.b_STATE==='1'" [formControl]="checkcuotas"
+                      (ngModelChange)="valuesCuotas($event,cuota.i_ID_INSTALLMENT,cuota.v_INSTALLMENT_NUMBER,cuota.i_TOTAL_AMOUNT)"></mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="MORA">
+                  <th mat-header-cell *matHeaderCellDef> Mora </th>
+                  <td mat-cell *matCellDef="let cuota">
+                    <button *ngIf="cuota.i_TOTAL_AMOUNT > cuota.i_INSTALLMENT_AMOUNT && cuota.b_STATE !== '2'"
+                      type="button" mat-icon-button class="btnPayment"
+                      (click)="openDialogMora(verMorasDialog, cuota.i_ID_INSTALLMENT)">
+                      <fa-icon [icon]="faCircleExclamation" [fixedWidth]="true" class="icon-payment"></fa-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+            <div class="info-cuotas mat-body">
+              <p>Cuotas a pagar: </p>
+              <div *ngFor="let cuotaspagar of cuotasPagar">
+                <span class="info-cuotacliente">{{cuotaspagar.num}}, </span>
+              </div>
+            </div>
+            <p class="mat-body">Monto total a pagar: <span class="info-cuotacliente">{{totalmonto.toFixed(2)}}</span></p>
+          </div>
+        </div>
+        <mat-form-field *ngIf="optionRadio.value==='subcuota'" appearance="outline" class="mat-body dense-3">
+          <mat-label class="mat-body">Monto</mat-label>
+          <input class="mat-body" matInput formControlName="monto" placeholder="Ingrese el monto" required>
+        </mat-form-field>
+
+        <div mat-dialog-actions align="end" class="margin-button-modal">
+          <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="" (click)="actualizarCuotas()"
+            *ngIf="optionRadio.value==='cuota'" [disabled]="cuotasPagar.length==0">Pagar</button>
+          <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="" (click)="identificarOperacion()"
+            *ngIf="optionRadio.value!=='cuota'" [disabled]="!secondFormGroup.valid">Pagar</button>
+          <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+        </div>
+        <div class="spinner" *ngIf="loading()">
+          <div class=" lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </mat-dialog-content>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #verMorasDialog>
+  <div class="ng-profile">
+    <div class="title-modal" cdkFocusInitial>Cuotas y moras</div>
+    <mat-dialog-content>
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <table mat-table [dataSource]="mora" class="mat-elevation-z8 " matSort align="center">
+            <ng-container matColumnDef="i_MORA_ID">
+              <th mat-header-cell *matHeaderCellDef> N° </th>
+              <td mat-cell *matCellDef="let mora; let n = index">{{(n+1)}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="v_TYPE_MORA">
+              <th mat-header-cell *matHeaderCellDef>
+                <div class="header-table-icon" align="end">
+                  <span>Tipo </span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let mora">{{ mora.v_TYPE_MORA }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="i_MORA_AMOUNT">
+              <th mat-header-cell *matHeaderCellDef>
+                <div class="header-table-icon" align="end">
+                  <span>Monto </span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let mora"> {{ mora.i_MORA_AMOUNT }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="i_NUMBER_DAYS">
+              <th mat-header-cell *matHeaderCellDef>
+                <div class="header-table-icon" align="end">
+                  <span>Días </span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let mora">
+                {{ mora.i_NUMBER_DAYS }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="b_STATE">
+              <th mat-header-cell *matHeaderCellDef>
+                <div class="header-table-icon" align="end">
+                  <span>Estado</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let mora">
+                <span class="chip-borrador" removable *ngIf="mora.b_STATE === '1' ">Pendiente</span>
+                <span class="chip-inactive" removable *ngIf="mora.b_STATE === '0' ">Eliminado</span>
+                <span class="chip-active" removable *ngIf="mora.b_STATE === '2' ">Pagado</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="ACTIONS">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let mora">
+                <button type="button" mat-icon-button class="btnPayment" (click)="onEdit(mora.i_MORA_ID)"
+                  [hidden]="deshabilitarBtn(mora.b_STATE)">
+                  <fa-icon [icon]="faCircleDollarToSlot" [fixedWidth]="true" class="icon-payment"></fa-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsMora"></tr>
+            <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumnsMora;"></tr>
+          </table>
+        </div>
+      </div>
+
+      <p></p>
+
+      <div *ngIf="isEditable" class="row">
+        <div class="col-lg-12 col-md-12">
+          <div *ngIf="isEditable">
+            <form [formGroup]="formUpdateMora">
+              <div class="row filtro">
+                <div class="col-lg-5 col-md-5">
+                  <mat-form-field appearance="outline" style="width: 100%;" class="full-width mat-body">
+                    <mat-label class="mat-body">Tipo</mat-label>
+                    <mat-select class="mat-body" (selectionChange)="onChangeTipoCanc($event)"
+                      placeholder="Seleccione el tipo" formControlName="v_tipo_canc">
+                      <mat-option class="mat-body" value="">-- Seleccione --</mat-option>
+                      <mat-option class="mat-body" *ngFor="let tipo_canc of listaTiposCancMora"
+                        [value]="tipo_canc.i_TYPE_CANC_MORA_ID">
+                        {{ tipo_canc.v_NAME }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error>
+                      <ng-container *ngIf="tipoCancField?.hasError('required')">El tipo es requerido.</ng-container>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <mat-form-field appearance="outline" class="mat-body first-field">
+                    <mat-label class="mat-body">Monto </mat-label>
+                    <input matInput type="text" formControlName="v_monto" placeholder="Monto">
+                    <mat-error [class.active]="isMontoMoraFieldInvalidForm">
+                      <ng-container *ngIf="montoMoraField?.hasError('required')">El monto es requerido.</ng-container>
+                      <ng-container *ngIf="montoMoraField?.hasError('pattern')">Ingrese un monto válido.</ng-container>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-md-3" align="right">
+                  <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="Registro exitoso"
+                    (click)="updateMora()" [disabled]="formUpdateMora.invalid">Guardar
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <div class="row">
+              <table mat-table [dataSource]="listaCancMora" class="mat-elevation-z8 " matSort align="center">
+                <ng-container matColumnDef="v_TYPE_CANC_MORA">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <div class="header-table-icon" align="end">
+                      <span>Tipo </span>
+                    </div>
+                  </th>
+                  <td mat-cell *matCellDef="let mora_canc">{{ mora_canc.v_TYPE_CANC_MORA }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="i_AMOUNT_CANC_MORA">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <div class="header-table-icon" align="end">
+                      <span>Monto </span>
+                    </div>
+                  </th>
+                  <td mat-cell *matCellDef="let mora_canc">{{ mora_canc.i_AMOUNT_CANC_MORA }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="i_START_AMOUNT_MORA">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <div class="header-table-icon" align="end">
+                      <span>Monto inicial </span>
+                    </div>
+                  </th>
+                  <td mat-cell *matCellDef="let mora_canc"> {{ mora_canc.i_START_AMOUNT_MORA }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="i_END_AMOUNT_MORA">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <div class="header-table-icon" align="end">
+                      <span>Monto final </span>
+                    </div>
+                  </th>
+                  <td mat-cell *matCellDef="let mora_canc">
+                    {{ mora_canc.i_END_AMOUNT_MORA }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="d_CREATE_DATE">
+                  <th mat-header-cell *matHeaderCellDef> Fecha de registro </th>
+                  <td mat-cell *matCellDef="let mora_canc">
+                    <div *ngIf="mora_canc.d_CREATE_DATE == '0001-01-01T00:00:00' ; else isNotStart">
+                    </div>
+                    <ng-template #isNotStart>
+                      {{ mora_canc.d_CREATE_DATE | date:'dd/MM/yyyy hh:mm a' }}
+                    </ng-template>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsCancMora"></tr>
+                <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumnsCancMora;"></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+  </div>
+  <p></p>
+</ng-template>

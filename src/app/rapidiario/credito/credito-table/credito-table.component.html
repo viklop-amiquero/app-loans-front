@@ -1,0 +1,36 @@
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="numero_cuota">
+            <th mat-header-cell *matHeaderCellDef> Número de Cuota </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.numeroCuota}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef> Fecha </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.fecha | date:'dd/MM/yyyy'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="saldo">
+            <th mat-header-cell *matHeaderCellDef> Saldo </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.saldo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="capital">
+            <th mat-header-cell *matHeaderCellDef> Capital </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.capital}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="interes">
+            <th mat-header-cell *matHeaderCellDef> Interés </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.interes}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cuota">
+            <th mat-header-cell *matHeaderCellDef> Cuota </th>
+            <td mat-cell *matCellDef="let cuota"> {{cuota.montoCuota}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>

@@ -1,0 +1,421 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 filtro">
+    <h2 class="titulo-centrado">LISTADO DE USUARIOS</h2>
+  </div>
+</div>
+
+<div class="container-grid">
+  <form [formGroup]="formFiltrarTable" #forms>
+    <div class="row between-xs">
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Tipo de búsqueda</mat-label>
+          <mat-select class="mat-body" placeholder="Tipo de búsqueda" formControlName="filtro_v"
+            (selectionChange)="getListadoUserTable()" (click)="resetControls()" (ngModelChange)="changeSelectTipo()">
+            <mat-option value="">Seleccione una opción</mat-option>
+            <mat-option value="USUARIO">Usuario</mat-option>
+            <mat-option value="PERSONA">Nombre completo</mat-option>
+            <mat-option value="ROL">Rol</mat-option>
+            <mat-option value="STATE">Estado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      @if (filtro_v_selected == 'USUARIO') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nombre de usuario </mat-label>
+          <input matInput type="text" placeholder="Ingrese nombre de usuario" formControlName="usuario"
+            (keyup)="getListadoUserTable()">
+        </mat-form-field>
+      </div>
+      }
+      @if (filtro_v_selected == 'PERSONA') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nombre completo </mat-label>
+          <input matInput type="text" placeholder="Ingrese nombre completo" formControlName="persona"
+            (keyup)="getListadoUserTable()">
+        </mat-form-field>
+      </div>
+      }
+      @if (filtro_v_selected == 'ROL') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Rol</mat-label>
+          <mat-select class="mat-body" placeholder="Rol" formControlName="rol" (selectionChange)="getListadoUserTable()">
+            <mat-option *ngFor="let rol of listaRoles" [value]="rol.v_ROLE">{{ rol.v_ROLE }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+      @if (filtro_v_selected == 'STATE') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Estado</mat-label>
+          <mat-select class="mat-body" placeholder="Estado" formControlName="estado"
+            (selectionChange)="getListadoUserTable()">
+            <mat-option value="1">Activo</mat-option>
+            <mat-option value="0">Inactivo</mat-option>
+            <mat-option value="2">Bloqueado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+      <div class="col-xs-6 col-md-4" align="right">
+        <button *ngIf="this.permisos[0] === 1" type="button" mat-raised-button color="primary" (click)="openDialog(crearUserDialog)" class="btnAgregar">
+          <fa-icon [icon]="faSquarePlus" class="faicon-squareplus"  [fixedWidth]="true"></fa-icon><span class="texto-add">Nuevo usuario</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+
+  <mat-paginator class="mat-elevation-z8" (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" [pageIndex]="pageIndex" aria-label="Select page">
+  </mat-paginator>
+
+  <p></p>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 " matSort align="center">
+      <ng-container matColumnDef="i_ID_USER">
+        <th mat-header-cell *matHeaderCellDef> Nro. </th>
+        <td mat-cell *matCellDef="let userapp; let n = index">{{(n+1) + (pageIndex*pageSize)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_USER">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Usuario </span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let userapp">{{ userapp.v_USER }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_FULL_NAME">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Nombre completo </span>
+            @if (orderAscFullName) {
+            <mat-icon (click)="clickAsc(2)">keyboard_arrow_up
+            </mat-icon>
+            }
+            @if (orderDescFullName) {
+            <mat-icon (click)="clickDesc(2)">keyboard_arrow_down
+            </mat-icon>
+            }
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let userapp">{{ userapp.v_FULL_NAME }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_ROLE">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Rol </span>
+            @if (orderAscRole) {
+            <mat-icon (click)="clickAsc(3)">keyboard_arrow_up
+            </mat-icon>
+            }
+            @if (orderDescRole) {
+            <mat-icon (click)="clickDesc(3)">keyboard_arrow_down
+            </mat-icon>
+            }
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let userapp"> {{ userapp.v_ROLE }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="d_START_DATE">
+        <th mat-header-cell *matHeaderCellDef> Fecha de inicio </th>
+        <td mat-cell *matCellDef="let userapp">
+          <div *ngIf="userapp.d_START_DATE == '0001-01-01T00:00:00' ; else isNotStart">
+          </div>
+          <ng-template #isNotStart>
+            {{ userapp.d_START_DATE | date:'dd/MM/yyyy' }}
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="d_END_DATE">
+        <th mat-header-cell *matHeaderCellDef> Fecha de fin </th>
+        <td mat-cell *matCellDef="let userapp">
+          <div *ngIf="userapp.d_END_DATE == '0001-01-01T00:00:00' ; else isNotStart">
+          </div>
+          <ng-template #isNotStart>
+            {{ userapp.d_END_DATE | date:'dd/MM/yyyy' }}
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="b_STATE">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Estado</span>
+            @if (orderAscEstado) {
+            <mat-icon (click)="clickAsc(4)">keyboard_arrow_up
+            </mat-icon>
+            }
+            @if (orderDescEstado) {
+            <mat-icon (click)="clickDesc(4)">keyboard_arrow_down
+            </mat-icon>
+            }
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let userapp">
+          <span class="chip-active" removable *ngIf="userapp.b_STATE === '1' ">Activo</span>
+          <span class="chip-inactive" removable *ngIf="userapp.b_STATE === '0' ">Inactivo</span>
+          <span class="chip-borrador" removable *ngIf="userapp.b_STATE === '2' ">Bloqueado</span>
+          <span class="chip-caducado" removable *ngIf="userapp.b_STATE === '3' ">Caducado</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ACTIONS" class="btnActions" >
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let userapp">
+          <button type="button" mat-icon-button class="btnActionEdit"
+            (click)="openEditUser(editarUsuario, userapp.i_ID_USER)"
+            [hidden]="deshabilitarBtn(userapp.b_STATE) || this.permisos[2] === 0">
+            <fa-icon [icon]="faPencil" [fixedWidth]="true" class="icon-pencil"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionDelete"
+            (click)="openDeleteUsuario(eliminarUsuario, userapp.i_ID_USER)"
+            [hidden]="deshabilitarBtn(userapp.b_STATE) || this.permisos[3] === 0">
+            <fa-icon [icon]="faTrash" [fixedWidth]="true" class="icon-delete"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionActivate"
+            (click)="activateUsuario(userapp.i_ID_USER)"
+            [hidden]="!(deshabilitarBtn(userapp.b_STATE) && userapp.b_STATE !== '3') || this.permisos[3] === 0">
+            <fa-icon [icon]="faBolt" [fixedWidth]="true" class="icon-activate"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionEditAccess"
+            (click)="openEditAccessUser(editarAccessUsuario, userapp.i_ID_USER)"
+            [hidden]="!(deshabilitarBtn(userapp.b_STATE) && userapp.b_STATE === '3') || this.permisos[3] === 0">
+            <fa-icon [icon]="faClock" [fixedWidth]="true" class="icon-edit-access"></fa-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <p></p>
+
+  @if (pageSize != 10) {
+  <mat-paginator class="mat-elevation-z8" (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+    [showFirstLastButtons]="true" [pageIndex]="pageIndex" aria-label="Select page">
+  </mat-paginator>
+  }
+</div>
+
+<ng-template #eliminarUsuario>
+  <div class="ng-profile">
+    <div class="title-modal" cdkFocusInitial>Eliminar usuario</div>
+    <div mat-dialog-content align="center" class="content-dialog-delete">
+      <p>¿Está seguro que desea eliminar el usuario?</p>
+    </div>
+    <div mat-dialog-actions class="footerDialog">
+      <button  mat-raised-button color="primary" class="loadButton" (click)="deleteUsuario()">
+        Si
+      </button>
+      <button mat-stroked-button color="primary" class="loadButton" mat-dialog-close>
+        No
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #crearUserDialog>
+  <div class="title-modal" cdkFocusInitial>Crear usuario</div>
+  <form [formGroup]="formUser">
+    <div class="content-modal">
+      <mat-dialog-content>
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nombre de la persona </mat-label>
+          <input type="text" placeholder="Persona" aria-label="Number" matInput formControlName="v_name"
+          [matAutocomplete]="autoPers">
+          <mat-error [class.active]="isNameFieldInvalidForm">
+            <ng-container *ngIf="nameField?.hasError('required')">El nombre de la persona es requerido.</ng-container>
+          </mat-error>
+          <mat-autocomplete autoActiveFirstOption #autoPers="matAutocomplete">
+            @for (person of personaFind | async; track person) {
+            <mat-option [value]="person.i_PERSON_ID">
+              {{ person.v_FIRST_NAME + " " + person.v_PATERNAL_LAST_NAME + " " +  person.v_MOTHER_LAST_NAME }}
+            </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Rol</mat-label>
+          <mat-select class="mat-body" (selectionChange)="onChangeRole($event)" formControlName="v_rol">
+            <mat-option class="mat-body" value="">-- Seleccione --</mat-option>
+            <mat-option class="mat-body" *ngFor="let rol of listaRoles" [value]="rol.i_ROLE_ID">{{ rol.v_ROLE }}</mat-option>
+          </mat-select>
+          <mat-error>
+            <ng-container *ngIf="roleField?.hasError('required')">El rol es requerido.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de inicio</mat-label>
+          <input matInput [matDatepicker]="datepicker1" type="date" formControlName="d_fecha_inicio"
+            (ngModelChange)="enableEndDate()" [min]="minDateInicio" [max]="maxDateInicio">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker1"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker1>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateStartFieldInvalidForm">
+            <ng-container *ngIf="dateStartField?.hasError('required')">La fecha de inicio es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de fin</mat-label>
+          <input matInput [matDatepicker]="datepicker2" type="date" formControlName="d_fecha_fin"
+            (ngModelChange)="maxStartDate()" [min]="minDateFin">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker2>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateEndFieldInvalidForm">
+            <ng-container *ngIf="dateEndField?.hasError('required')">La fecha de fin es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+    </mat-dialog-content>
+    </div>
+    <div mat-dialog-actions class="footerDialog">
+      <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="Registro exitoso"
+        (click)="onSave()" [disabled]="formUser.invalid">Guardar</button>&nbsp;&nbsp;
+      <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #editarUsuario>
+  <div class="title-modal" cdkFocusInitial>Editar usuario</div>
+  <form [formGroup]="formUser">
+    <div class="content-modal">
+      <mat-dialog-content>
+        <mat-form-field appearance="outline" class="mat-body" disabled>
+          <mat-label class="mat-body">Nombre de la persona </mat-label>
+          <input type="text" placeholder="Persona" aria-label="Number" matInput formControlName="v_name"
+            [matAutocomplete]="autoPers">
+          <mat-error [class.active]="isNameFieldInvalidForm">
+            <ng-container *ngIf="nameField?.hasError('required')">El nombre de la persona es requerido.</ng-container>
+          </mat-error>
+          <mat-autocomplete autoActiveFirstOption #autoPers="matAutocomplete">
+            @for (person of personaFind | async; track person) {
+            <mat-option [value]="person.i_PERSON_ID">
+              {{ person.v_FIRST_NAME + " " + person.v_PATERNAL_LAST_NAME + " " + person.v_MOTHER_LAST_NAME }}
+            </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Roles</mat-label>
+          <mat-select class="mat-body" [(value)]="selectedRoleId" (selectionChange)="onChangeRole($event)" formControlName="v_rol">
+            <mat-option class="mat-body" *ngFor="let rol of listaRoles" [value]="rol.i_ROLE_ID">{{ rol.v_ROLE }}</mat-option>
+          </mat-select>
+          <mat-error>
+            <ng-container *ngIf="roleField?.hasError('required')">El rol es requerido.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de inicio</mat-label>
+          <input matInput [matDatepicker]="datepicker1" type="date" formControlName="d_fecha_inicio"
+            (ngModelChange)="enableEndDate()" [min]="minDateInicio" [max]="maxDateInicio">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker1"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker1>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateStartFieldInvalidForm">
+            <ng-container *ngIf="dateStartField?.hasError('required')">La fecha de inicio es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de fin</mat-label>
+          <input matInput [matDatepicker]="datepicker2" type="date" formControlName="d_fecha_fin"
+            (ngModelChange)="maxStartDate()" [min]="minDateFin">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker2>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateEndFieldInvalidForm">
+            <ng-container *ngIf="dateEndField?.hasError('required')">La fecha de fin es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+      </mat-dialog-content>
+    </div>
+    <div mat-dialog-actions class="footerDialog">
+      <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="Actualizacion exitosa"
+        (click)="updateUser()" [disabled]="formUser.invalid">Guardar</button>&nbsp;&nbsp;
+      <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #editarAccessUsuario>
+  <div class="title-modal" cdkFocusInitial>Actualizar acceso del usuario</div>
+  <form [formGroup]="formUser">
+    <div class="content-modal">
+      <mat-dialog-content>
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Nombre de la persona </mat-label>
+          <input type="text" placeholder="Persona" aria-label="Number" matInput formControlName="v_name"
+            [matAutocomplete]="autoPers">
+          <mat-error [class.active]="isNameFieldInvalidForm">
+            <ng-container *ngIf="nameField?.hasError('required')">El nombre de la persona es requerido.</ng-container>
+          </mat-error>
+          <mat-autocomplete autoActiveFirstOption #autoPers="matAutocomplete">
+            @for (person of personaFind | async; track person) {
+            <mat-option [value]="person.i_PERSON_ID">
+              {{ person.v_FIRST_NAME + " " + person.v_PATERNAL_LAST_NAME + " " + person.v_MOTHER_LAST_NAME }}
+            </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Roles</mat-label>
+          <mat-select class="mat-body" [(value)]="selectedRoleId" (selectionChange)="onChangeRole($event)"
+            formControlName="v_rol">
+            <mat-option class="mat-body" *ngFor="let rol of listaRoles" [value]="rol.i_ROLE_ID">{{ rol.v_ROLE
+              }}</mat-option>
+          </mat-select>
+          <mat-error>
+            <ng-container *ngIf="roleField?.hasError('required')">El rol es requerido.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de inicio</mat-label>
+          <input matInput [matDatepicker]="datepicker1" type="date" formControlName="d_fecha_inicio"
+            (ngModelChange)="enableEndDate()" [min]="minDateInicio" [max]="maxDateInicio">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker1"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker1>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateStartFieldInvalidForm">
+            <ng-container *ngIf="dateStartField?.hasError('required')">La fecha de inicio es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Fecha de fin</mat-label>
+          <input matInput [matDatepicker]="datepicker2" type="date" formControlName="d_fecha_fin"
+            (ngModelChange)="maxStartDate()" [min]="minDateFin">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker2>
+          </mat-datepicker>
+          <mat-error [class.active]="isDateEndFieldInvalidForm">
+            <ng-container *ngIf="dateEndField?.hasError('required')">La fecha de fin es requerida.</ng-container>
+          </mat-error>
+        </mat-form-field>
+      </mat-dialog-content>
+    </div>
+    <div mat-dialog-actions class="footerDialog">
+      <button mat-raised-button color="primary" typeBtn="submit" mat-dialog-close="Actualizacion exitosa"
+        (click)="updateAccesoUsuario()" [disabled]="formUser.invalid">Guardar</button>&nbsp;&nbsp;
+      <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+    </div>
+  </form>
+</ng-template>

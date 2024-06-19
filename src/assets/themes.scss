@@ -1,0 +1,139 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+@font-face {
+  font-family: 'OpenSans';
+  src: url('./fonts/OpenSans.ttf');
+}
+
+$my-primary-color: (
+  50 :  #E5C7E4,
+  100 : #DCB5DB,
+  200 : #D09CCF,
+  300 : #C17BC0,
+  400 : #AB51A9,
+  500 : #70356F,
+  600 : #5F2D5F,
+  700 : #512650,
+  800 : #452144,
+  900 : #3B1C3A,
+  // A100 : #C47AF1,
+  // A200 : #9A2FEB,
+  // A400 : #9000E9 ,
+  // A700 : #8400D3,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
+);
+$my-accent-color: (
+  50 : #e9f2f7,
+  100 : #c8deeb,
+  200 : #a3c8de,
+  300 : #7eb2d1,
+  400 : #63a2c7,
+  500 : #4791bd,
+  600 : #4089b7,
+  700 : #377eae,
+  800 : #2f74a6,
+  900 : #206298,
+  A100 : #d4eaff,
+  A200 : #a1d2ff,
+  A400 : #6eb9ff,
+  A700 : #54adff,
+  contrast: (
+      50 : #000000,
+      100 : #000000,
+      200 : #000000,
+      300 : #000000,
+      400 : #000000,
+      500 : #ffffff,
+      600 : #ffffff,
+      700 : #ffffff,
+      800 : #ffffff,
+      900 : #ffffff,
+      A100 : #000000,
+      A200 : #000000,
+      A400 : #000000,
+      A700 : #000000,
+  )
+
+);
+
+$my-warn-color: (
+    50 : #f7e4e4,
+    100 : #eababa,
+    200 : #dd8d8d,
+    300 : #cf5f5f,
+    400 : #c43c3c,
+    500 : #ba1a1a,
+    600 : #b31717,
+    700 : #ab1313,
+    800 : #a30f0f,
+    900 : #940808,
+    A100 : #ffc1c1,
+    A200 : #ff8e8e,
+    A400 : #ff5b5b,
+    A700 : #ff4141,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+$opensans-typography: mat.define-typography-config(
+    $font-family: 'OpenSans',
+  );
+
+// Define a light theme
+$light-theme: mat.define-light-theme((
+ color: (
+   primary: mat.define-palette($my-primary-color),
+   accent: mat.define-palette($my-accent-color, A400),
+   warn: mat.define-palette($my-warn-color),
+ ),
+    typography: $opensans-typography,
+    density: 0,
+));
+
+// Define a dark theme
+$dark-theme: mat.define-dark-theme((
+ color: (
+   primary: mat.define-palette(mat.$deep-purple-palette, A200),
+   accent: mat.define-palette(mat.$pink-palette, 300),
+ ),
+    typography: $opensans-typography,
+    density: 0,
+));
+
+@include mat.typography-hierarchy($opensans-typography);
+
+@include mat.all-component-themes($light-theme);
+
+.dark-mode {
+  @include mat.all-component-colors($dark-theme);
+}

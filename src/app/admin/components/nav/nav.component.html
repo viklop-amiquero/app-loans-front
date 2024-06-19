@@ -1,0 +1,125 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+
+        <mat-toolbar>
+            <img eager="lazy" width="44" src="../../../../assets/images/SeñorCautivo_2.png" alt="logo" />
+        </mat-toolbar>
+
+        <mat-nav-list class="menu">
+          @for (menu of menuData; track $index) {
+            @if(menu.sub_menu.length === 0){
+              <mat-divider></mat-divider>
+              <div class="styleFirstLevel"
+                [ngClass]="{ 'activeMenu':  menu.ruta == rutaActual || menu.ruta + '/create' ==  rutaActual || menu.ruta + '/edit' ==  rutaActual}">
+                <a mat-list-item [routerLink]="menu.ruta" class="menuPrimerLevel" (click)="toggleMenu(menu.id_menu, menu.ruta)">
+                  <div class="menu-content">
+                    <mat-icon class="menu-icono">{{ menu.icon }}</mat-icon>
+                    <!-- {{ menu.nameMenu }} -->
+                    <span class="menuName">{{ menu.nameMenu }}</span>
+                  </div>
+                </a>
+              </div>
+              <mat-divider></mat-divider>
+            }
+            @if (menu.sub_menu.length !== 0) {
+              <mat-divider></mat-divider>
+              <div class="styleFirstLevel">
+                <a mat-list-item [routerLink]="menu.ruta" class="menuPrimerLevel" (click)="toggleMenuPadre(menu.id_menu, menu.ruta)">
+                  <div class="menu-content">
+                    <mat-icon class="menu-icono">{{ menu.icon }}</mat-icon>
+
+                    <span class="menuName">{{ menu.nameMenu }}</span>
+
+                    <mat-icon class="iconArrowRight"
+                      [ngClass]="{ 'iconArrowRightHidden':  menuBoolExpanded && menu.id_menu == idMenu}">keyboard_arrow_right</mat-icon>
+                    <mat-icon class="iconArrowDown"
+                      [ngClass]="{ 'iconArrowDownShow':  menuBoolExpanded && menu.id_menu == idMenu }">keyboard_arrow_down</mat-icon>
+                  </div>
+                </a>
+              </div>
+              <mat-divider></mat-divider>
+            }
+            @if(menu.sub_menu.length != 0 && menuBoolExpanded && menu.id_menu == idMenu){
+              @for (submenu of menu.sub_menu ; track submenu.id_menu) {
+                <div class="styleSecondLevel"
+                [ngClass]="{ 'activeMenu':  submenu.ruta == rutaActual || submenu.ruta + '/create' ==  rutaActual || submenu.ruta + '/edit' ==  rutaActual}">
+                  <a mat-list-item [routerLink]="submenu.ruta" class="menuSegundoLevel" (click)="toggleMenu(submenu.id_menu, submenu.ruta)">
+                    {{ submenu.name }}
+                  </a>
+                </div>
+              }
+            }
+          }
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <mat-toolbar color="primary">
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+                <fa-icon [icon]="faBars"></fa-icon>
+            </button>
+            <span class="span-nav">Financiera del Señor Cautivo</span>
+            <span class="example-spacer"></span>
+            <span class="span-nav">&nbsp;&nbsp; {{ profile.name }} &nbsp;&nbsp;</span>
+            <img [src]="imgperfil" alt="Image Source" class="img-avatar" [matMenuTriggerFor]="menu">
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="openDialog(profileUser)">Perfil</button>
+                <button mat-menu-item (click)="openDialog(changePassword)">Cambiar contraseña</button>
+                <button mat-menu-item (click)="logout()"><mat-icon>exit_to_app</mat-icon> Salir</button>
+            </mat-menu>
+        </mat-toolbar>
+
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+<ng-template #profileUser >
+  <div class="ng-profile" >
+    <div class="title-modal" cdkFocusInitial>Perfil de usuario</div>
+      <div mat-dialog-content align="center" class="content-modal">
+        <p class="font-size"><span class="font-size">DNI: {{ profile.user_name }} </span></p>
+        <p class="font-size"><span class="font-size">Usuario: {{ profile.name }} {{ profile.paternal_surname }} {{ profile.maternal_surname }}</span></p>
+        <p class="font-size"><span class="font-size">Rol: {{ profile.role }}</span></p>
+      </div>
+      <div mat-dialog-actions align="end">
+        <button mat-raised-button color="primary" mat-dialog-close >Salir</button>
+      </div>
+  </div>
+</ng-template>
+
+
+<ng-template #changePassword >
+  <div class="ng-password">
+    <div class="title-modal" >Actualizar contraseña</div>
+    <form [formGroup]="formChange" (ngSubmit)="onSave()">
+        <div mat-dialog-content class="content-modal">
+          <div class="row dense-3 ">
+            <div class="col-xs">
+                <mat-form-field appearance="outline" class="full-width mat-body">
+                    <mat-label class="mat-body">Ingrese contraseña actual</mat-label>
+                    <input placeholder="Contraseña" formControlName="oldpassword" matInput type="text" cdkFocusInitial [type]="hideoldp ? 'password' : 'text'">
+
+                </mat-form-field>
+            </div>
+            <div class="col-xs">
+              <mat-form-field appearance="outline" class="full-width mat-body">
+                  <mat-label class="mat-body">Ingrese nueva contraseña</mat-label>
+                  <input placeholder="Contraseña" formControlName="newpassword" matInput type="text" [type]="hidenewp ? 'password' : 'text'">
+                  <button type="button" mat-icon-button matSuffix (click)="hidenewp = !hidenewp">
+                    <mat-icon *ngIf="!hidenewp">visibility_off</mat-icon>
+                    <mat-icon *ngIf="hidenewp">visibility</mat-icon>
+                  </button>
+
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div mat-dialog-actions align="end" class="margin-button-modal">
+            <button mat-raised-button color="primary" typeBtn="submit" >Guardar</button>&nbsp;&nbsp;
+            <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

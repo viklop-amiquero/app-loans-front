@@ -1,0 +1,222 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 filtro">
+    <h2 class="titulo-centrado">LISTADO DE ROLES</h2>
+  </div>
+</div>
+
+<div class="container-grid">
+  <form [formGroup]="formFiltrarTable" #forms>
+    <div class="row between-xs">
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Tipo de búsqueda</mat-label>
+          <mat-select class="mat-body" placeholder="Tipo de búsqueda" formControlName="filtro_v"
+            (selectionChange)="getListadoRolTable()" (click)="resetControls()" (ngModelChange)="changeSelectTipo()">
+            <mat-option value="">Seleccione una opción</mat-option>
+            <mat-option value="NAME">Rol</mat-option>
+            <mat-option value="STATE">Estado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (filtro_v_selected == 'NAME') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Rol</mat-label>
+          <mat-select class="mat-body" placeholder="Rol" formControlName="rol" (selectionChange)="getListadoRolTable()">
+            <mat-option *ngFor="let rol of listaRoles" [value]="rol.v_ROLE">{{ rol.v_ROLE }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+
+      @if (filtro_v_selected == 'STATE') {
+      <div class="col-xs-6 col-md-4 dense-3">
+        <mat-form-field appearance="outline" class="mat-body">
+          <mat-label class="mat-body">Estado</mat-label>
+          <mat-select class="mat-body" placeholder="Estado" formControlName="estado"
+            (selectionChange)="getListadoRolTable()">
+            <mat-option value="1">Activo</mat-option>
+            <mat-option value="0">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+      <div class="col-xs-6 col-md-4" align="right">
+        <button *ngIf="this.permisos[0] === 1" type="button" mat-raised-button color="primary" (click)="onAddRol()" class="btnAgregar">
+          <fa-icon [icon]="faSquarePlus" class="faicon-squareplus"  [fixedWidth]="true"></fa-icon><span class="texto-add">Nuevo rol</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+
+  <mat-paginator class="mat-elevation-z8" (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" [pageIndex]="pageIndex" aria-label="Select page">
+  </mat-paginator>
+
+  <p></p>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+      <ng-container matColumnDef="i_ROLE_ID">
+        <th mat-header-cell *matHeaderCellDef> Nro. </th>
+        <td mat-cell *matCellDef="let rol; let n = index">{{(n+1) + (pageIndex*pageSize)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_ROLE">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Rol </span>
+            @if (orderAscRol) {
+            <mat-icon (click)="clickAsc(2)">keyboard_arrow_up
+            </mat-icon>
+            }
+            @if (orderDescRol) {
+            <mat-icon (click)="clickDesc(2)">keyboard_arrow_down
+            </mat-icon>
+            }
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let rol"> {{ rol.v_ROLE }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="v_DESCRIPTION">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Descripcion </span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let rol"> {{ rol.v_DESCRIPTION }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="d_CREATE_DATE">
+        <th mat-header-cell *matHeaderCellDef> Fecha de registro </th>
+        <td mat-cell *matCellDef="let rol">
+          <div *ngIf="rol.d_CREATE_DATE == '0001-01-01T00:00:00' ; else isNotStart">
+          </div>
+          <ng-template #isNotStart>
+            {{ rol.d_CREATE_DATE | date:'dd/MM/yyyy hh:mm a' }}
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="b_STATE">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-table-icon" align="end">
+            <span>Estado</span>
+            @if (orderAscEstado) {
+            <mat-icon (click)="clickAsc(3)">keyboard_arrow_up
+            </mat-icon>
+            }
+            @if (orderDescEstado) {
+            <mat-icon (click)="clickDesc(3)">keyboard_arrow_down
+            </mat-icon>
+            }
+          </div>
+        </th>
+
+        <td mat-cell *matCellDef="let rol">
+          <span class="chip-active" removable *ngIf="rol.b_STATE === '1' ">Activo</span>
+          <span class="chip-inactive" removable *ngIf="rol.b_STATE === '0' ">Inactivo</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="ACTIONS">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let rol">
+          <button type="button" mat-icon-button class="btnActionDetail"
+            (click)="getDetalleRol(visualizarRolDialog, rol.i_ROLE_ID)">
+            <fa-icon [icon]="faEye" [fixedWidth]="true" class="icon-eye"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionEdit"
+            (click)="onEditRol(rol.i_ROLE_ID)"
+            [hidden]="deshabilitarBtn(rol.b_STATE) || this.permisos[2] === 0">
+            <fa-icon [icon]="faPencil" [fixedWidth]="true" class="icon-pencil"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionDelete"
+            (click)="openDeleteRol(eliminarRol, rol.i_ROLE_ID)"
+            [hidden]="deshabilitarBtn(rol.b_STATE) || this.permisos[3] === 0">
+            <fa-icon [icon]="faTrash" [fixedWidth]="true" class="icon-delete"></fa-icon>
+          </button>
+          <button type="button" mat-icon-button class="btnActionActivate"
+            (click)="activateRol(rol.i_ROLE_ID)"
+            [hidden]="!deshabilitarBtn(rol.b_STATE) || this.permisos[3] === 0">
+            <fa-icon [icon]="faBolt" [fixedWidth]="true" class="icon-activate"></fa-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="table-element-row" *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <p></p>
+
+  @if (pageSize != 10) {
+  <mat-paginator class="mat-elevation-z8" (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+    [showFirstLastButtons]="true" [pageIndex]="pageIndex" aria-label="Select page">
+  </mat-paginator>
+  }
+</div>
+
+<ng-template #eliminarRol>
+  <div class="ng-profile">
+    <div class="title-modal" cdkFocusInitial>Eliminar rol</div>
+
+    <div mat-dialog-content align="center" class="content-dialog-delete">
+      <p>¿Está seguro que desea eliminar el rol?</p>
+    </div>
+    <div mat-dialog-actions class="footerDialog">
+      <button mat-raised-button color="primary" class="loadButton" (click)="deleteRol()">
+        Si
+      </button>
+      <button mat-stroked-button color="primary" class="loadButton" mat-dialog-close>
+        No
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #visualizarRolDialog>
+  <div class="title-modal" cdkFocusInitial>Información del rol</div>
+  <div mat-dialog-content class="dialog-content">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <span class="text-view" [ngStyle]="{'font-weight':'bold'}">Rol: </span>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <span class="text-view">{{ this.rolView.v_ROLE }}</span>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <span class="text-view" [ngStyle]="{'font-weight':'bold'}">Descripción: </span>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <span class="text-view">{{ this.rolView.v_DESCRIPTION }}</span>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <span class="text-view" [ngStyle]="{'font-weight':'bold'}">Accesos: </span>
+      </div>
+    </div>
+
+    <table mat-table [dataSource]="listaMenuUserRol" matSort>
+      <ng-container matColumnDef="menus">
+        <th mat-header-cell *matHeaderCellDef>Menús</th>
+        <td mat-cell *matCellDef="let x" class="custom-column name-file">
+          <span>{{ x.menu }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="permisos">
+        <th mat-header-cell *matHeaderCellDef>Permisos</th>
+        <td mat-cell *matCellDef="let x" class="custom-column">
+          <span>{{ x.permiso.description }}</span>
+        </td>
+      </ng-container>
+      <tr mat-row *matRowDef="let row; columns: ['menus', 'permisos']"></tr>
+    </table>
+  </div>
+</ng-template>

@@ -1,0 +1,80 @@
+
+table {
+  width: 100%;
+  img {
+    width: 150px;
+  }
+}
+
+tr.table-element-row:hover {
+  background: whitesmoke;
+}
+
+tr.table-element-row:active {
+  background: #efefef;
+}
+
+.mat-column-i_ID_PERSON {
+  text-align: center;
+}
+
+.mat-column-v_NUMBER_DOCUMENT {
+  text-align: center;
+}
+.mat-column-v_NAME {
+  width: 300px!important;
+}
+
+.mat-column-v_DISTRICT {
+  text-align: center;
+}
+
+.mat-column-v_MOVIL_PHONE {
+  text-align: center;
+}
+
+.mat-column-d_DATE_CREATE {
+  text-align: center;
+}
+
+.mat-column-b_STATE {
+  width: 32px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.mat-column-ACTIONS {
+  width: 150px!important;
+  text-align: center;
+}
+
+.mdc-evolution-chip-set {
+  display: inline-block !important;
+  justify-content: center !important;
+}
+.btnActions{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 61px;
+
+}
+
+.custom-column {
+  height: 10px !important;
+  border: none;
+}
+.name-file{
+  font-weight: 700;
+}
+.dialog-content {
+  height: 500px;
+  overflow-y: auto;
+}
+.spinner-content{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}

@@ -1,0 +1,107 @@
+:host {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../../../../assets/images/cautivo_fondo.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+mat-form-field {
+    width: 100%;
+  }
+
+.img-login {
+  max-width: 40%;
+  margin:auto;
+	display:block;
+  padding: 0px 0px 20px 0px;
+}
+
+.title-login {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 0px 0px 30px 0;
+}
+
+mat-card {
+  width: 100%;
+  margin: 0px auto;
+  position: relative;
+  mat-form-field {
+  width: 100%;
+  }
+  mat-card-actions {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media  (min-width:200px) {
+  mat-card{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+  }
+}
+
+@media  (min-width: 480px) {
+  mat-card{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+  }
+}
+
+@media (min-width: 768px) {
+  mat-card {
+    position: absolute;
+    max-width: 360px;
+    width: 100%;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 50%);
+    perspective: 2700px;
+  }
+}
+
+.error-login {
+    font-size: 12px;
+    line-height: 20px;
+    color: #ba1a1a;
+    padding: 0 16px;
+}
+
+.loadButton{
+  width: 170px;
+}
+.activeSpinner{
+  text-align: left;
+}
+.activeSpinner .spinnerLoading{
+  opacity: 1;
+}
+.spinnerLoading{
+  position: absolute;
+  top: 2px;
+  right: -20px;
+  display: inline-block;
+  opacity: 0;
+}
+
+.icon-login {
+  padding: 0 10px 0 0px;
+  font-size: 18px;
+  color: #70356F;
+}
+
+.icon-password {
+  padding: 0 10px 0 0px;
+  font-size: 18px;
+  color: #70356F;
+}

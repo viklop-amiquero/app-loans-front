@@ -1,0 +1,19 @@
+//Header from steps
+:host{
+    width: 96%;
+    margin: 2%;
+    display: block;
+}
+
+.mat-stepper-horizontal {
+    margin-top: 8px;
+  }
+  ::ng-deep.mat-step-header {
+
+    @media (min-width:480px) {
+
+      display: flex;
+      flex-direction: column ;
+      align-items: center ;
+    }
+  }

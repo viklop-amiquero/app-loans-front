@@ -1,0 +1,154 @@
+<div class="container-grid" style="padding-top:25px;">
+  <div class="row">
+    <div class="col-lg-3 col-md-2">
+    </div>
+
+    <div class="col-lg-3 col-md-4" align="center">
+      <mat-card>
+        <mat-card-header class="card">
+          <mat-card-title-group>
+            <mat-card-title><span class="text-card">Ingreso del día </span>
+            </mat-card-title>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content><span class="content-card">{{ mayorIngresoDia }}</span>
+          <fa-icon [icon]="faArrowUp" class="icon-arrow-up" [fixedWidth]="true"></fa-icon>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-3 col-md-4" align="center">
+      <mat-card>
+        <mat-card-header class="card">
+          <mat-card-title-group>
+            <mat-card-title><span class="text-card">Desembolso del día</span></mat-card-title>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content><span class="content-card">{{ mayorDesembolsoDia }}</span>
+          <fa-icon [icon]="faArrowUp" class="icon-arrow-down" [fixedWidth]="true"></fa-icon>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-3 col-md-2">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 filtro">
+      <h2 class="titulo-centrado">DIARIO</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4 col-md-4">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Ingresos
+            </mat-panel-title>
+            <mat-panel-description>
+              Total: {{ sumIngresosDia }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let ingreso of ingresosDia">{{ ingreso }}</mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div class="col-lg-4 col-md-4">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Gastos operativos
+            </mat-panel-title>
+            <mat-panel-description>
+              Total: {{ sumGastosDia }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let gasto of gastosDia">{{ gasto }}</mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div class="col-lg-4 col-md-4">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Desembolsos
+            </mat-panel-title>
+            <mat-panel-description>
+              Total: {{ sumDesembolsosDia }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let desembolso of desembolsosDia">{{ desembolso }}</mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 filtro">
+      <h2 class="titulo-centrado">MENSUAL</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-1 col-md-1">
+    </div>
+
+    <div class="col-lg-3 col-md-3" align="center">
+      <mat-card class="ingresos-mes">
+        <mat-card-header class="card-mes">
+          <mat-card-title-group>
+            <mat-card-title><span class="text-card">Ingresos </span>
+            </mat-card-title>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content><span class="content-card-mes">{{ ingresosMes }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-4 col-md-4" align="center">
+      <mat-card class="gastos-mes">
+        <mat-card-header class="card-mes">
+          <mat-card-title-group>
+            <mat-card-title><span class="text-card">Gastos operativos </span>
+            </mat-card-title>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content><span class="content-card-mes">{{ gastosMes }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-3 col-md-3" align="center">
+      <mat-card class="desembolsos-mes">
+        <mat-card-header class="card-mes">
+          <mat-card-title-group>
+            <mat-card-title><span class="text-card">Desembolsos </span>
+            </mat-card-title>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content><span class="content-card-mes">{{ desembolsosMes }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-1 col-md-1">
+    </div>
+  </div>
+</div>

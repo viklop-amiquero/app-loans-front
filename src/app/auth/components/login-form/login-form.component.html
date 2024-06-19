@@ -1,0 +1,86 @@
+<mat-card>
+  <form [formGroup]="form" (ngSubmit)="login()">
+        <mat-card-header>
+          <mat-card-title></mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+          <img eager="lazy" class="img-login" src="../../../../assets/images/SeñorCautivo_2.png" alt="logo"  />
+          <div class="title-login"></div>
+          <div class="row">
+            <div class="col-xs dense-3">
+
+              <mat-form-field appearance="outline" class="mat-body">
+                <mat-label class="mat-body">DNI </mat-label>
+                <input matInput type="text" formControlName="v_user" placeholder="DNI" maxlength="8">
+                <mat-icon color="primary" matSuffix class="icon-login"><fa-icon [icon]="faUser"></fa-icon></mat-icon>
+                <mat-error [class.active]="isUserFieldInvalidForm">
+                  <ng-container *ngIf="userFieldForm?.hasError('required')">El DNI es requerido.</ng-container>
+                  <ng-container *ngIf="userFieldForm?.hasError('minlength') || form.controls.v_user.hasError('pattern')">Ingrese un DNI válido.</ng-container>
+                </mat-error>
+              </mat-form-field>
+
+            </div>
+          </div>
+          <p></p>
+          <div class="row">
+            <div class="col-xs dense-3">
+
+              <mat-form-field appearance="outline" class="mat-body">
+                <mat-label class="mat-body">Contraseña </mat-label>
+                <input matInput type="password" formControlName="v_password" placeholder="Contraseña" >
+                <mat-icon color="primary" matSuffix class="icon-login"><fa-icon [icon]="faLock"></fa-icon></mat-icon>
+                <mat-error [class.active]="isPasswordFieldInvalidForm">
+                  <ng-container *ngIf="passwordFieldForm?.hasError('required')">La contraseña es requerida.</ng-container>
+                  <ng-container *ngIf="passwordFieldForm?.hasError('minlength')">Contraseña mínima 8 caracteres.</ng-container>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button color="primary" class="loadButton"
+          [disabled]="form.invalid"
+          [ngClass]="{activeSpinner: consultingService}"
+          type="submit">
+            {{consultingService ? 'Ingresando' : 'Ingresar'}}
+            <mat-spinner diameter="16" color="accent" class="spinnerLoading"></mat-spinner>
+          </button>
+
+        </mat-card-actions>
+     </form>
+    </mat-card>
+
+    <ng-template #changePassword >
+      <div class="ng-password">
+        <div class="title-modal" >ACTUALIZAR CONTRASEÑA</div>
+        <form [formGroup]="formChange" (ngSubmit)="onSave()">
+            <div mat-dialog-content class="content-modal">
+              <div class="row dense-3 ">
+                <div class="col-xs">
+                    <mat-form-field appearance="outline" class="full-width mat-body">
+                        <mat-label class="mat-body">Ingrese contraseña actual</mat-label>
+                        <input placeholder="Contraseña" formControlName="oldpassword" matInput type="text" cdkFocusInitial [type]="hideoldp ? 'password' : 'text'">
+
+                    </mat-form-field>
+                </div>
+                <div class="col-xs">
+                  <mat-form-field appearance="outline" class="full-width mat-body">
+                      <mat-label class="mat-body">Ingrese nueva contraseña</mat-label>
+                      <input placeholder="Contraseña" formControlName="newpassword" matInput type="text" [type]="hidenewp ? 'password' : 'text'">
+                      <button type="button" mat-icon-button matSuffix (click)="hidenewp = !hidenewp">
+                        <fa-icon [icon]="faEye">{{hidenewp ? 'visibility_off' : 'visibility'}}</fa-icon>
+                      </button>
+
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div mat-dialog-actions align="end">
+                <button mat-raised-button color="primary" typeBtn="submit" >Guardar</button>
+                <button mat-stroked-button color="primary" mat-dialog-close="">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
